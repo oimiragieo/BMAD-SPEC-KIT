@@ -1,0 +1,71 @@
+{
+  "session_id": "{{session_id}}",
+  "created_at": "{{timestamp}}",
+  "last_updated": "{{timestamp}}",
+  "project": {
+    "name": "{{project_name}}",
+    "type": "{{project_type}}",
+    "workflow": "{{selected_workflow}}",
+    "status": "{{project_status}}"
+  },
+  "current_context": {
+    "active_workflow": "{{workflow_name}}",
+    "current_step": "{{step_number}}",
+    "active_agent": "{{agent_name}}",
+    "current_task": "{{task_name}}"
+  },
+  "workflow_progress": {
+    "completed_steps": [],
+    "current_step": "{{current_step}}",
+    "next_steps": [],
+    "blocked_steps": []
+  },
+  "artifacts": {
+    "generated": [],
+    "templates_used": [],
+    "context_files": []
+  },
+  "agents": {
+    "analyst": {
+      "activated": false,
+      "last_task": null,
+      "outputs": []
+    },
+    "pm": {
+      "activated": false,
+      "last_task": null,
+      "outputs": []
+    },
+    "architect": {
+      "activated": false,
+      "last_task": null,
+      "outputs": []
+    },
+    "developer": {
+      "activated": false,
+      "last_task": null,
+      "outputs": []
+    },
+    "qa": {
+      "activated": false,
+      "last_task": null,
+      "outputs": []
+    },
+    "ux-expert": {
+      "activated": false,
+      "last_task": null,
+      "outputs": []
+    }
+  },
+  "user_preferences": {
+    "workflow_mode": "{{interactive|yolo}}",
+    "detail_level": "{{high|medium|low}}",
+    "feedback_frequency": "{{each_step|milestones|completion}}"
+  },
+  "quality_gates": {
+    "passed": [],
+    "failed": [],
+    "pending": []
+  },
+  "notes": []
+}

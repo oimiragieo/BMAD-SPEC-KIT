@@ -1,0 +1,99 @@
+# BMAD-Spec Orchestrator Configuration
+system:
+  version: "1.0.0"
+  name: "BMAD-Spec Orchestrator for Claude"
+  mode: "claude-native"
+  
+ai_settings:
+  primary_model: "claude-sonnet-4"
+  temperature: 0.7
+  max_tokens: 4000
+  
+subagent_models:
+  # High complexity tasks - Architecture, Security, Critical Analysis
+  high_complexity: "claude-opus-4"
+  # Medium complexity tasks - Development, PM, UX Design  
+  medium_complexity: "claude-sonnet-4"
+  # Low complexity tasks - Basic analysis, simple tasks
+  low_complexity: "claude-3-5-haiku"
+  
+defaults:
+  workflow: "greenfield-fullstack"
+  output_directory: "./generated"
+  context_retention: true
+  session_persistence: true
+  
+triggers:
+  activation_phrases:
+    - "create a"
+    - "build a"
+    - "develop a"
+    - "make a"
+    - "I need a"
+    - "use BMAD"
+    - "start a new project"
+    
+workflow_selection:
+  keywords:
+    ui_indicators: ["frontend", "UI", "interface", "React", "Vue", "Angular", "design", "user interface"]
+    service_indicators: ["backend", "API", "service", "server", "database", "REST", "GraphQL"]
+    fullstack_indicators: ["application", "app", "full-stack", "complete", "website", "platform"]
+    brownfield_indicators: ["existing", "modify", "update", "enhance", "add to", "change", "improve"]
+    
+agent_roles:
+  analyst:
+    trigger_words: ["research", "analyze", "requirements", "market", "feasibility"]
+    default_temperature: 0.7
+    model: "claude-sonnet-4"  # Medium complexity - business analysis
+    
+  pm:
+    trigger_words: ["plan", "roadmap", "stories", "features", "prioritize"]
+    default_temperature: 0.6
+    model: "claude-sonnet-4"  # Medium complexity - product management
+    
+  architect:
+    trigger_words: ["design", "architecture", "system", "structure", "patterns"]
+    default_temperature: 0.5
+    model: "claude-opus-4"    # High complexity - system architecture
+    
+  developer:
+    trigger_words: ["implement", "code", "build", "create", "develop"]
+    default_temperature: 0.6
+    model: "claude-sonnet-4"  # Medium complexity - code implementation
+    
+  qa:
+    trigger_words: ["test", "quality", "verify", "validate", "check"]
+    default_temperature: 0.5
+    model: "claude-opus-4"    # High complexity - quality assurance
+    
+  ux_expert:
+    trigger_words: ["user experience", "interface", "usability", "accessibility"]
+    default_temperature: 0.7
+    model: "claude-sonnet-4"  # Medium complexity - UX design
+    
+output_formats:
+  documents:
+    extension: ".md"
+    use_headers: true
+    include_metadata: true
+    
+  code:
+    include_comments: true
+    use_proper_formatting: true
+    follow_conventions: true
+    
+  diagrams:
+    format: "mermaid"
+    include_descriptions: true
+    
+session_settings:
+  auto_save: true
+  save_interval: "after_each_step"
+  history_limit: 100
+  artifact_retention: "permanent"
+  
+validation:
+  check_completeness: true
+  verify_consistency: true
+  validate_templates: true
+  ensure_quality: true

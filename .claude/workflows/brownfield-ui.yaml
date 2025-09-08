@@ -1,0 +1,171 @@
+# Brownfield UI Workflow - Claude Native Format
+workflow:
+  name: brownfield-ui
+  description: "Enhance existing frontend application with new features or improvements"
+  type: brownfield
+  category: frontend
+  
+metadata:
+  version: "1.0.0"
+  author: "BMAD System"
+  last_updated: "2024-01-01"
+  
+requirements:
+  - Existing UI application codebase
+  - Enhancement specification document
+  - User feedback or analytics data (optional)
+  
+sequence:
+  - step: 1
+    name: "Existing UI Analysis"
+    agent: architect
+    task: analyze_existing_system
+    template: project_documentation
+    creates: "artifacts/ui-analysis.md"
+    description: "Analyze existing frontend application and identify improvement areas"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Examine the existing frontend codebase, structure, and technologies
+      Analyze current UI patterns, components, and design system
+      Review user feedback, analytics data, and performance metrics if available
+      Identify technical debt, outdated patterns, and enhancement opportunities
+      Document current state, constraints, and improvement recommendations
+      Save output to context/artifacts/ui-analysis.md
+    
+  - step: 2
+    name: "Enhancement Requirements"
+    agent: pm
+    task: create_brownfield_prd
+    template: brownfield_prd
+    creates: "artifacts/prd.md"
+    depends_on: [1]
+    description: "Create enhancement-focused Product Requirements Document"
+    instructions: |
+      Load the PM agent prompt from .claude/agents/pm/prompt.md
+      Reference the UI analysis from step 1 and user enhancement specification
+      Apply the brownfield PRD template from .claude/templates/brownfield-prd.md
+      Generate requirements focused on UI enhancements with existing system integration
+      Include migration strategies, backward compatibility, and rollout plans
+      Define user stories that account for existing user behavior and patterns
+      Save output to context/artifacts/prd.md
+    
+  - step: 3
+    name: "UI/UX Enhancement Design"
+    agent: ux-expert
+    task: design_ui_enhancements
+    template: ui_spec
+    creates: "artifacts/front-end-spec.md"
+    depends_on: [1, 2]
+    description: "Design UI enhancements that integrate with existing system"
+    instructions: |
+      Load the UX Expert agent prompt from .claude/agents/ux-expert/prompt.md
+      Reference UI analysis and enhancement PRD from previous steps
+      Apply the UI spec template from .claude/templates/ui-spec.md
+      Design enhancements that respect existing design patterns and user expectations
+      Create transition strategies for design changes and new interaction patterns
+      Ensure consistency with existing components while introducing improvements
+      Save output to context/artifacts/front-end-spec.md
+    
+  - step: 4
+    name: "Integration Architecture"
+    agent: architect
+    task: design_integration_strategy
+    template: brownfield_architecture
+    creates: "artifacts/architecture.md"
+    depends_on: [1, 2, 3]
+    description: "Design integration strategy for UI enhancements"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Reference UI analysis, PRD, and UI spec from previous steps
+      Apply the brownfield architecture template from .claude/templates/brownfield-architecture.md
+      Design safe integration strategy that minimizes risk to existing functionality
+      Plan component migration, state management updates, and build process changes
+      Include testing strategy for ensuring existing functionality remains intact
+      Create rollback plans and deployment strategies
+      Save output to context/artifacts/architecture.md
+    
+  - step: 5
+    name: "Enhanced Components Implementation"
+    agent: developer
+    task: implement_ui_enhancements
+    creates: "src/components-enhanced/"
+    depends_on: [3, 4]
+    description: "Implement UI enhancements and new components"
+    instructions: |
+      Load the Developer agent prompt from .claude/agents/developer/prompt.md
+      Reference UI spec and architecture documents from previous steps
+      Implement new UI components that integrate with existing codebase
+      Enhance existing components while maintaining backward compatibility
+      Update styling, interactions, and responsive behavior as specified
+      Include proper TypeScript types and documentation
+      Save outputs to src/components-enhanced/, src/styles-enhanced/
+    
+  - step: 6
+    name: "Integration Testing Strategy"
+    agent: qa
+    task: create_integration_test_plan
+    template: test_plan
+    creates: "artifacts/test-plan.md"
+    depends_on: [4, 5]
+    description: "Create testing strategy for UI enhancements"
+    instructions: |
+      Load the QA agent prompt from .claude/agents/qa/prompt.md
+      Reference architecture and implementation from previous steps
+      Apply the test plan template from .claude/templates/test-plan.md
+      Generate testing strategy that ensures existing functionality remains intact
+      Include regression testing, component testing, and user acceptance testing
+      Create test scenarios for migration paths and rollback procedures
+      Plan visual regression testing and cross-browser compatibility testing
+      Save output to context/artifacts/test-plan.md
+    
+  - step: 7
+    name: "Implementation Review"
+    agent: architect
+    task: review_ui_integration
+    creates: "artifacts/review-notes.md"
+    depends_on: [5, 6]
+    description: "Review UI enhancements and integration safety"
+    instructions: |
+      Load the Architect agent prompt again from .claude/agents/architect/prompt.md
+      Review all generated artifacts and UI enhancement implementation
+      Validate that enhancements integrate safely with existing system
+      Check for potential conflicts, performance impacts, and security considerations
+      Verify that rollback strategies are viable and migration paths are clear
+      Provide recommendations for deployment, monitoring, and user training
+      Save output to context/artifacts/review-notes.md
+
+outputs:
+  documents:
+    - ui-analysis.md
+    - prd.md
+    - front-end-spec.md
+    - architecture.md
+    - test-plan.md
+    - review-notes.md
+  code:
+    - src/components-enhanced/
+    - src/styles-enhanced/
+    - src/utils-enhanced/
+    - src/hooks-enhanced/
+    - migration-scripts/
+  configuration:
+    - package.json (updated)
+    - webpack.config.js (updated)
+    - .storybook/ (if applicable)
+  testing:
+    - tests/integration/
+    - tests/regression/
+    - tests/components-enhanced/
+
+project_types:
+  - ui-modernization
+  - framework-migration
+  - design-refresh
+  - frontend-enhancement
+
+when_to_use:
+  - UI enhancement requires coordinated stories
+  - Design system changes needed
+  - New component patterns required
+  - User research and testing needed
+  - Multiple team members will work on related changes

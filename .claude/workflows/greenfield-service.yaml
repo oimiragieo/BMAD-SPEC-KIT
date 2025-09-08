@@ -1,0 +1,155 @@
+# Greenfield Service Workflow - Claude Native Format
+workflow:
+  name: greenfield-service
+  description: "Create a new backend service/API from scratch"
+  type: greenfield
+  category: backend
+  
+metadata:
+  version: "1.0.0"
+  author: "BMAD System"
+  last_updated: "2024-01-01"
+  
+requirements:
+  - User specification document
+  - Technical preferences (optional)
+  - API requirements (optional)
+  
+sequence:
+  - step: 1
+    name: "Project Analysis"
+    agent: analyst
+    task: analyze_specification
+    template: project_brief
+    creates: "artifacts/project-brief.md"
+    description: "Analyze user requirements and create project brief"
+    instructions: |
+      Load the analyst agent prompt from .claude/agents/analyst/prompt.md
+      Apply the project brief template from .claude/templates/project-brief.md
+      Generate comprehensive project analysis including technical feasibility and market context
+      Focus on backend service requirements and API design considerations
+      Save output to context/artifacts/project-brief.md
+    
+  - step: 2
+    name: "Requirements Documentation"
+    agent: pm
+    task: create_prd
+    template: prd
+    creates: "artifacts/prd.md"
+    depends_on: [1]
+    description: "Create Product Requirements Document"
+    instructions: |
+      Load the PM agent prompt from .claude/agents/pm/prompt.md
+      Reference the project brief from step 1
+      Apply the PRD template from .claude/templates/prd.md
+      Generate detailed requirements document focused on API/service requirements
+      Include endpoint specifications, data models, and service boundaries
+      Save output to context/artifacts/prd.md
+    
+  - step: 3
+    name: "Service Architecture"
+    agent: architect
+    task: design_architecture
+    template: architecture
+    creates: "artifacts/architecture.md"
+    depends_on: [2]
+    description: "Design backend service architecture"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Reference the PRD from step 2
+      Apply the architecture template from .claude/templates/architecture.md
+      Focus on backend technologies, API design patterns, data storage, and scalability
+      Include database schema, API endpoints, service layers, and deployment architecture
+      Consider microservice patterns, authentication, and external integrations
+      Save output to context/artifacts/architecture.md
+    
+  - step: 4
+    name: "API Implementation"
+    agent: developer
+    task: implement_api
+    creates: "src/api/"
+    depends_on: [3]
+    description: "Implement API endpoints and business logic"
+    instructions: |
+      Load the Developer agent prompt from .claude/agents/developer/prompt.md
+      Reference PRD and architecture documents from previous steps
+      Generate API route handlers, middleware, and business logic
+      Create database models and data access layers
+      Include error handling, validation, and security measures
+      Implement authentication and authorization if required
+      Save outputs to src/api/, src/models/, src/middleware/, src/services/
+    
+  - step: 5
+    name: "Testing Strategy"
+    agent: qa
+    task: create_test_plan
+    template: test_plan
+    creates: "artifacts/test-plan.md"
+    depends_on: [3, 4]
+    description: "Create comprehensive testing strategy"
+    instructions: |
+      Load the QA agent prompt from .claude/agents/qa/prompt.md
+      Reference architecture and implemented API from previous steps
+      Apply the test plan template from .claude/templates/test-plan.md
+      Generate testing strategy including unit, integration, and API tests
+      Create test scenarios for all endpoints, edge cases, and error conditions
+      Include performance testing and security testing considerations
+      Save output to context/artifacts/test-plan.md
+    
+  - step: 6
+    name: "Implementation Review"
+    agent: architect
+    task: review_implementation
+    creates: "artifacts/review-notes.md"
+    depends_on: [4, 5]
+    description: "Review and validate implementation"
+    instructions: |
+      Load the Architect agent prompt again from .claude/agents/architect/prompt.md
+      Review all generated artifacts and API implementation
+      Validate consistency between architecture and implementation
+      Check adherence to REST/GraphQL best practices and standards
+      Verify security measures and performance considerations
+      Provide improvement recommendations and deployment guidance
+      Save output to context/artifacts/review-notes.md
+
+outputs:
+  documents:
+    - project-brief.md
+    - prd.md
+    - architecture.md
+    - test-plan.md
+    - review-notes.md
+  code:
+    - src/api/
+    - src/models/
+    - src/middleware/
+    - src/services/
+    - src/utils/
+    - src/config/
+  configuration:
+    - package.json
+    - server.js
+    - .env.example
+    - docker-compose.yml
+    - Dockerfile
+    - .gitignore
+  testing:
+    - tests/unit/
+    - tests/integration/
+    - tests/api/
+
+project_types:
+  - rest-api
+  - graphql-api
+  - microservice
+  - backend-service
+  - api-prototype
+  - simple-service
+
+when_to_use:
+  - Building production APIs or microservices
+  - Multiple endpoints and complex business logic
+  - Need comprehensive documentation and testing
+  - Multiple team members will be involved
+  - Long-term maintenance expected
+  - Enterprise or external-facing APIs

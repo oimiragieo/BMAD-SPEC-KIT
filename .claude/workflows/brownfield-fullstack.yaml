@@ -1,0 +1,215 @@
+# Brownfield Fullstack Workflow - Claude Native Format
+workflow:
+  name: brownfield-fullstack
+  description: "Enhance existing full-stack application with new features or improvements"
+  type: brownfield
+  category: fullstack
+  
+metadata:
+  version: "1.0.0"
+  author: "BMAD System"
+  last_updated: "2024-01-01"
+  
+requirements:
+  - Existing full-stack application codebase
+  - Enhancement specification document
+  - System documentation (optional but recommended)
+  
+sequence:
+  - step: 1
+    name: "Enhancement Scope Classification"
+    agent: analyst
+    task: classify_enhancement
+    creates: "artifacts/enhancement-classification.md"
+    description: "Determine enhancement complexity and appropriate workflow path"
+    instructions: |
+      Load the Analyst agent prompt from .claude/agents/analyst/prompt.md
+      Analyze the enhancement request to determine scope:
+      - Single story (< 4 hours): Simple bug fix or minor feature
+      - Small feature (1-3 stories): Focused feature addition
+      - Major enhancement (multiple epics): Significant changes requiring architecture
+      Ask user: "Can you describe the enhancement scope? Is this a small fix, a feature addition, or a major enhancement requiring architectural changes?"
+      Document the classification and recommended workflow path
+      Save output to context/artifacts/enhancement-classification.md
+    
+  - step: 2
+    name: "Existing System Analysis"
+    agent: architect
+    task: analyze_existing_system
+    template: project_documentation
+    creates: "artifacts/system-analysis.md"
+    depends_on: [1]
+    condition: major_enhancement
+    description: "Analyze existing full-stack application and current state"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Examine the existing full-stack codebase, architecture, and technologies
+      Analyze frontend components, backend services, database schemas, and integrations
+      Review system documentation, API specifications, and coding standards
+      Identify technical debt, performance issues, and architectural constraints
+      Document current state, integration dependencies, and enhancement opportunities
+      Save output to context/artifacts/system-analysis.md
+    
+  - step: 3
+    name: "Enhancement Requirements"
+    agent: pm
+    task: create_brownfield_prd
+    template: brownfield_prd
+    creates: "artifacts/prd.md"
+    depends_on: [1, 2]
+    description: "Create enhancement-focused Product Requirements Document"
+    instructions: |
+      Load the PM agent prompt from .claude/agents/pm/prompt.md
+      Reference system analysis and enhancement classification from previous steps
+      Apply the brownfield PRD template from .claude/templates/brownfield-prd.md
+      Generate requirements that account for existing system constraints and dependencies
+      Include migration strategies, backward compatibility, and integration considerations
+      Define user stories that respect existing user workflows and data structures
+      Save output to context/artifacts/prd.md
+    
+  - step: 4
+    name: "UI/UX Enhancement Planning"
+    agent: ux-expert
+    task: plan_ui_enhancements
+    template: ui_spec
+    creates: "artifacts/ui-enhancement-spec.md"
+    depends_on: [2, 3]
+    optional: true
+    condition: frontend_changes_required
+    description: "Plan UI/UX enhancements that integrate with existing design"
+    instructions: |
+      Load the UX Expert agent prompt from .claude/agents/ux-expert/prompt.md
+      Reference system analysis and PRD from previous steps
+      Apply the UI spec template from .claude/templates/ui-spec.md
+      Design enhancements that maintain consistency with existing UI patterns
+      Plan component updates, new interactions, and design system integration
+      Consider user experience implications of changes to existing workflows
+      Save output to context/artifacts/ui-enhancement-spec.md
+    
+  - step: 5
+    name: "Integration Architecture"
+    agent: architect
+    task: design_integration_architecture
+    template: brownfield_architecture
+    creates: "artifacts/architecture.md"
+    depends_on: [2, 3, 4]
+    condition: architectural_changes_needed
+    description: "Design integration strategy for full-stack enhancements"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Reference system analysis, PRD, and UI enhancement spec from previous steps
+      Apply the brownfield architecture template from .claude/templates/brownfield-architecture.md
+      Design safe integration strategy for both frontend and backend changes
+      Plan database migrations, API updates, and component integration
+      Include deployment strategy, rollback plans, and monitoring considerations
+      Address security, performance, and scalability implications
+      Save output to context/artifacts/architecture.md
+    
+  - step: 6
+    name: "Frontend Enhancement Implementation"
+    agent: developer
+    task: implement_frontend_enhancements
+    creates: "src/frontend-enhanced/"
+    depends_on: [4, 5]
+    condition: frontend_changes_required
+    description: "Implement frontend enhancements and component updates"
+    instructions: |
+      Load the Developer agent prompt from .claude/agents/developer/prompt.md
+      Reference UI enhancement spec and architecture from previous steps
+      Implement enhanced UI components while maintaining existing patterns
+      Update or create new pages, routes, and state management
+      Ensure backward compatibility with existing data structures and APIs
+      Include proper testing and documentation for new components
+      Save outputs to src/frontend-enhanced/, src/components-enhanced/
+    
+  - step: 7
+    name: "Backend Enhancement Implementation"
+    agent: developer
+    task: implement_backend_enhancements
+    creates: "src/backend-enhanced/"
+    depends_on: [3, 5]
+    condition: backend_changes_required
+    description: "Implement backend enhancements and API updates"
+    instructions: |
+      Load the Developer agent prompt from .claude/agents/developer/prompt.md
+      Reference PRD and architecture documents from previous steps
+      Implement enhanced API endpoints while maintaining existing contracts
+      Update business logic, data models, and database schemas with migrations
+      Ensure backward compatibility and proper versioning
+      Include enhanced error handling, validation, and security measures
+      Save outputs to src/backend-enhanced/, src/api-enhanced/
+    
+  - step: 8
+    name: "Integration Testing Strategy"
+    agent: qa
+    task: create_integration_test_plan
+    template: test_plan
+    creates: "artifacts/test-plan.md"
+    depends_on: [6, 7]
+    description: "Create comprehensive testing strategy for full-stack enhancements"
+    instructions: |
+      Load the QA agent prompt from .claude/agents/qa/prompt.md
+      Reference all implementation artifacts from previous steps
+      Apply the test plan template from .claude/templates/test-plan.md
+      Generate testing strategy that ensures existing functionality remains intact
+      Include frontend testing, API testing, integration testing, and e2e testing
+      Create test scenarios for backward compatibility and migration procedures
+      Plan regression testing and user acceptance testing
+      Save output to context/artifacts/test-plan.md
+    
+  - step: 9
+    name: "Implementation Review"
+    agent: architect
+    task: review_fullstack_integration
+    creates: "artifacts/review-notes.md"
+    depends_on: [6, 7, 8]
+    description: "Review full-stack enhancements and integration safety"
+    instructions: |
+      Load the Architect agent prompt again from .claude/agents/architect/prompt.md
+      Review all generated artifacts and full-stack enhancement implementation
+      Validate that enhancements integrate safely with existing system
+      Check frontend-backend integration, data flow, and API compatibility
+      Verify security measures, performance impacts, and deployment readiness
+      Provide recommendations for rollout, monitoring, and maintenance
+      Save output to context/artifacts/review-notes.md
+
+outputs:
+  documents:
+    - enhancement-classification.md
+    - system-analysis.md
+    - prd.md
+    - ui-enhancement-spec.md (optional)
+    - architecture.md (conditional)
+    - test-plan.md
+    - review-notes.md
+  frontend_code:
+    - src/frontend-enhanced/
+    - src/components-enhanced/
+    - src/styles-enhanced/
+    - src/hooks-enhanced/
+  backend_code:
+    - src/backend-enhanced/
+    - src/api-enhanced/
+    - src/models-enhanced/
+    - src/services-enhanced/
+  configuration:
+    - package.json (updated)
+    - docker-compose.yml (updated)
+    - migration-scripts/
+  testing:
+    - tests/integration-enhanced/
+    - tests/regression/
+    - tests/e2e-enhanced/
+
+project_types:
+  - feature-addition
+  - refactoring
+  - modernization
+  - integration-enhancement
+
+when_to_use:
+  - Enhancement requires coordinated stories
+  - Architectural changes are needed
+  - Significant integration work required
+  - Risk assessment and mitigation planning necessary
+  - Multiple team members will work on related changes

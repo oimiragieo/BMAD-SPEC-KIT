@@ -1,0 +1,160 @@
+# Greenfield UI Workflow - Claude Native Format
+workflow:
+  name: greenfield-ui
+  description: "Create a new frontend/UI application from scratch"
+  type: greenfield
+  category: frontend
+  
+metadata:
+  version: "1.0.0"
+  author: "BMAD System"
+  last_updated: "2024-01-01"
+  
+requirements:
+  - User specification document
+  - Technical preferences (optional)
+  - Design requirements (optional)
+  
+sequence:
+  - step: 1
+    name: "Project Analysis"
+    agent: analyst
+    task: analyze_specification
+    template: project_brief
+    creates: "artifacts/project-brief.md"
+    description: "Analyze user requirements and create project brief"
+    instructions: |
+      Load the analyst agent prompt from .claude/agents/analyst/prompt.md
+      Apply the project brief template from .claude/templates/project-brief.md
+      Generate comprehensive project analysis including market context and feasibility
+      Save output to context/artifacts/project-brief.md
+    
+  - step: 2
+    name: "Requirements Documentation"
+    agent: pm
+    task: create_prd
+    template: prd
+    creates: "artifacts/prd.md"
+    depends_on: [1]
+    description: "Create Product Requirements Document"
+    instructions: |
+      Load the PM agent prompt from .claude/agents/pm/prompt.md
+      Reference the project brief from step 1
+      Apply the PRD template from .claude/templates/prd.md
+      Generate detailed requirements document focused on UI/frontend requirements
+      Save output to context/artifacts/prd.md
+    
+  - step: 3
+    name: "UI/UX Design"
+    agent: ux-expert
+    task: design_interface
+    template: ui_spec
+    creates: "artifacts/ui-spec.md"
+    depends_on: [1, 2]
+    description: "Design user interface and experience"
+    instructions: |
+      Load the UX Expert agent prompt from .claude/agents/ux-expert/prompt.md
+      Reference project brief and PRD
+      Apply the UI spec template from .claude/templates/ui-spec.md
+      Generate comprehensive UI/UX specifications including wireframes and user flows
+      Save output to context/artifacts/ui-spec.md
+    
+  - step: 4
+    name: "Technical Architecture"
+    agent: architect
+    task: design_architecture
+    template: architecture
+    creates: "artifacts/frontend-architecture.md"
+    depends_on: [2, 3]
+    description: "Design frontend technical architecture"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Reference PRD and UI specifications
+      Apply the architecture template from .claude/templates/architecture.md
+      Focus on frontend technologies, patterns, and scalability
+      Generate detailed technical architecture for frontend implementation
+      Save output to context/artifacts/frontend-architecture.md
+    
+  - step: 5
+    name: "Component Development"
+    agent: developer
+    task: implement_components
+    creates: "src/components/"
+    depends_on: [3, 4]
+    description: "Implement UI components"
+    instructions: |
+      Load the Developer agent prompt from .claude/agents/developer/prompt.md
+      Reference UI spec and architecture documents
+      Generate component structure and implementation code
+      Create reusable component library with proper TypeScript/JavaScript
+      Include styling and responsive design
+      Save outputs to src/components/
+    
+  - step: 6
+    name: "Testing Strategy"
+    agent: qa
+    task: create_test_plan
+    template: test_plan
+    creates: "artifacts/test-plan.md"
+    depends_on: [4, 5]
+    description: "Create comprehensive testing strategy"
+    instructions: |
+      Load the QA agent prompt from .claude/agents/qa/prompt.md
+      Reference architecture and implemented components
+      Apply the test plan template from .claude/templates/test-plan.md
+      Generate testing strategy including unit, integration, and e2e tests
+      Create test scenarios for all user flows and edge cases
+      Save output to context/artifacts/test-plan.md
+    
+  - step: 7
+    name: "Implementation Review"
+    agent: architect
+    task: review_implementation
+    creates: "artifacts/review-notes.md"
+    depends_on: [5, 6]
+    description: "Review and validate implementation"
+    instructions: |
+      Load the Architect agent prompt again
+      Review all generated artifacts and implementation
+      Validate consistency between architecture and implementation
+      Check adherence to best practices and standards
+      Provide improvement recommendations and next steps
+      Save output to context/artifacts/review-notes.md
+
+outputs:
+  documents:
+    - project-brief.md
+    - prd.md
+    - ui-spec.md
+    - frontend-architecture.md
+    - test-plan.md
+    - review-notes.md
+  code:
+    - src/components/
+    - src/styles/
+    - src/utils/
+    - src/hooks/
+    - src/types/
+  configuration:
+    - package.json
+    - tsconfig.json
+    - vite.config.js
+    - tailwind.config.js
+    - .eslintrc.js
+    - .prettierrc
+
+project_types:
+  - spa
+  - mobile-app
+  - micro-frontend
+  - static-site
+  - ui-prototype
+  - simple-interface
+
+when_to_use:
+  - Building production frontend applications
+  - Multiple views/pages with complex interactions
+  - Need comprehensive UI/UX design and testing
+  - Multiple team members will be involved
+  - Long-term maintenance expected
+  - Customer-facing applications

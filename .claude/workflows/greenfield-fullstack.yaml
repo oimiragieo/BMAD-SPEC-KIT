@@ -1,0 +1,209 @@
+# Greenfield Fullstack Workflow - Claude Native Format
+workflow:
+  name: greenfield-fullstack
+  description: "Create a new full-stack application from scratch"
+  type: greenfield
+  category: fullstack
+  
+metadata:
+  version: "1.0.0"
+  author: "BMAD System"
+  last_updated: "2024-01-01"
+  
+requirements:
+  - User specification document
+  - Technical preferences (optional)
+  - UI/UX requirements (optional)
+  
+sequence:
+  - step: 1
+    name: "Project Analysis"
+    agent: analyst
+    task: analyze_specification
+    template: project_brief
+    creates: "artifacts/project-brief.md"
+    description: "Analyze user requirements and create project brief"
+    instructions: |
+      Load the analyst agent prompt from .claude/agents/analyst/prompt.md
+      Apply the project brief template from .claude/templates/project-brief.md
+      Generate comprehensive project analysis including market context and technical feasibility
+      Focus on full-stack requirements including frontend, backend, and integration needs
+      Save output to context/artifacts/project-brief.md
+    
+  - step: 2
+    name: "Requirements Documentation"
+    agent: pm
+    task: create_prd
+    template: prd
+    creates: "artifacts/prd.md"
+    depends_on: [1]
+    description: "Create Product Requirements Document"
+    instructions: |
+      Load the PM agent prompt from .claude/agents/pm/prompt.md
+      Reference the project brief from step 1
+      Apply the PRD template from .claude/templates/prd.md
+      Generate detailed requirements document covering frontend, backend, and integration requirements
+      Include user stories, API specifications, data models, and user flows
+      Save output to context/artifacts/prd.md
+    
+  - step: 3
+    name: "UI/UX Design"
+    agent: ux-expert
+    task: design_interface
+    template: ui_spec
+    creates: "artifacts/front-end-spec.md"
+    depends_on: [2]
+    description: "Design user interface and experience"
+    instructions: |
+      Load the UX Expert agent prompt from .claude/agents/ux-expert/prompt.md
+      Reference PRD from step 2
+      Apply the UI spec template from .claude/templates/ui-spec.md
+      Generate comprehensive UI/UX specifications including wireframes and user flows
+      Design responsive interfaces and interaction patterns
+      Save output to context/artifacts/front-end-spec.md
+    
+  - step: 4
+    name: "AI UI Generation Prompt"
+    agent: ux-expert
+    task: generate_ai_prompt
+    creates: "artifacts/v0-prompt.md"
+    depends_on: [3]
+    optional: true
+    description: "Generate AI prompt for UI generation tools"
+    instructions: |
+      Load the UX Expert agent prompt from .claude/agents/ux-expert/prompt.md
+      Reference the front-end spec from step 3
+      Generate optimized prompts for AI UI tools like v0, Lovable, or similar
+      Include specific component requirements, styling preferences, and interactions
+      Save output to context/artifacts/v0-prompt.md
+    
+  - step: 5
+    name: "Full-Stack Architecture"
+    agent: architect
+    task: design_architecture
+    template: fullstack_architecture
+    creates: "artifacts/fullstack-architecture.md"
+    depends_on: [2, 3]
+    description: "Design comprehensive full-stack architecture"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Reference PRD and UI specifications from previous steps
+      Apply the fullstack architecture template from .claude/templates/fullstack-architecture.md
+      Design both frontend and backend architecture including database schema
+      Include deployment strategy, API design, state management, and security considerations
+      Consider integration points between frontend and backend
+      Save output to context/artifacts/fullstack-architecture.md
+    
+  - step: 6
+    name: "Frontend Implementation"
+    agent: developer
+    task: implement_frontend
+    creates: "src/frontend/"
+    depends_on: [3, 5]
+    description: "Implement frontend components and pages"
+    instructions: |
+      Load the Developer agent prompt from .claude/agents/developer/prompt.md
+      Reference UI spec and architecture documents
+      Generate React/Vue/Angular components, pages, and routing
+      Include state management, API integration, and styling
+      Implement responsive design and accessibility features
+      Save outputs to src/frontend/components/, src/frontend/pages/, src/frontend/styles/
+    
+  - step: 7
+    name: "Backend Implementation"
+    agent: developer
+    task: implement_backend
+    creates: "src/backend/"
+    depends_on: [5]
+    description: "Implement backend API and services"
+    instructions: |
+      Load the Developer agent prompt from .claude/agents/developer/prompt.md
+      Reference architecture document and PRD
+      Generate API endpoints, database models, and business logic
+      Include authentication, validation, and error handling
+      Implement data access layers and external service integrations
+      Save outputs to src/backend/api/, src/backend/models/, src/backend/services/
+    
+  - step: 8
+    name: "Integration & Testing"
+    agent: qa
+    task: create_test_plan
+    template: test_plan
+    creates: "artifacts/test-plan.md"
+    depends_on: [6, 7]
+    description: "Create comprehensive testing strategy"
+    instructions: |
+      Load the QA agent prompt from .claude/agents/qa/prompt.md
+      Reference all implementation artifacts from previous steps
+      Apply the test plan template from .claude/templates/test-plan.md
+      Generate testing strategy including unit, integration, and e2e tests
+      Include frontend testing, API testing, and full user journey tests
+      Create test scenarios for all user flows and edge cases
+      Save output to context/artifacts/test-plan.md
+    
+  - step: 9
+    name: "Implementation Review"
+    agent: architect
+    task: review_implementation
+    creates: "artifacts/review-notes.md"
+    depends_on: [6, 7, 8]
+    description: "Review and validate full-stack implementation"
+    instructions: |
+      Load the Architect agent prompt again from .claude/agents/architect/prompt.md
+      Review all generated artifacts and implementation
+      Validate consistency between architecture and implementation
+      Check integration points between frontend and backend
+      Verify security measures, performance considerations, and best practices
+      Provide improvement recommendations and deployment guidance
+      Save output to context/artifacts/review-notes.md
+
+outputs:
+  documents:
+    - project-brief.md
+    - prd.md
+    - front-end-spec.md
+    - fullstack-architecture.md
+    - test-plan.md
+    - review-notes.md
+    - v0-prompt.md (optional)
+  frontend_code:
+    - src/frontend/components/
+    - src/frontend/pages/
+    - src/frontend/styles/
+    - src/frontend/hooks/
+    - src/frontend/utils/
+    - src/frontend/types/
+  backend_code:
+    - src/backend/api/
+    - src/backend/models/
+    - src/backend/services/
+    - src/backend/middleware/
+    - src/backend/utils/
+    - src/backend/config/
+  configuration:
+    - package.json
+    - docker-compose.yml
+    - Dockerfile.frontend
+    - Dockerfile.backend
+    - .env.example
+    - .gitignore
+  testing:
+    - tests/frontend/
+    - tests/backend/
+    - tests/integration/
+    - tests/e2e/
+
+project_types:
+  - web-app
+  - saas
+  - enterprise-app
+  - prototype
+  - mvp
+
+when_to_use:
+  - Building production-ready applications
+  - Multiple team members will be involved
+  - Complex feature requirements
+  - Need comprehensive documentation
+  - Long-term maintenance expected
+  - Enterprise or customer-facing applications

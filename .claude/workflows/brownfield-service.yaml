@@ -1,0 +1,156 @@
+# Brownfield Service Workflow - Claude Native Format
+workflow:
+  name: brownfield-service
+  description: "Enhance existing backend service/API with new features or improvements"
+  type: brownfield
+  category: backend
+  
+metadata:
+  version: "1.0.0"
+  author: "BMAD System"
+  last_updated: "2024-01-01"
+  
+requirements:
+  - Existing service/API codebase
+  - Enhancement specification document
+  - Performance metrics or monitoring data (optional)
+  
+sequence:
+  - step: 1
+    name: "Existing Service Analysis"
+    agent: architect
+    task: analyze_existing_service
+    template: project_documentation
+    creates: "artifacts/service-analysis.md"
+    description: "Analyze existing backend service and identify improvement areas"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Examine the existing service codebase, architecture, and technologies
+      Analyze current API endpoints, data models, and service patterns
+      Review performance metrics, logs, and monitoring data if available
+      Identify technical debt, security vulnerabilities, and optimization opportunities
+      Document current state, integration dependencies, and enhancement recommendations
+      Save output to context/artifacts/service-analysis.md
+    
+  - step: 2
+    name: "Enhancement Requirements"
+    agent: pm
+    task: create_brownfield_prd
+    template: brownfield_prd
+    creates: "artifacts/prd.md"
+    depends_on: [1]
+    description: "Create enhancement-focused Product Requirements Document"
+    instructions: |
+      Load the PM agent prompt from .claude/agents/pm/prompt.md
+      Reference the service analysis from step 1 and user enhancement specification
+      Apply the brownfield PRD template from .claude/templates/brownfield-prd.md
+      Generate requirements focused on service enhancements with existing system integration
+      Include API versioning strategies, backward compatibility, and migration plans
+      Define user stories that account for existing integrations and dependencies
+      Save output to context/artifacts/prd.md
+    
+  - step: 3
+    name: "Service Integration Architecture"
+    agent: architect
+    task: design_service_enhancements
+    template: brownfield_architecture
+    creates: "artifacts/architecture.md"
+    depends_on: [1, 2]
+    description: "Design integration strategy for service enhancements"
+    instructions: |
+      Load the Architect agent prompt from .claude/agents/architect/prompt.md
+      Reference service analysis and enhancement PRD from previous steps
+      Apply the brownfield architecture template from .claude/templates/brownfield-architecture.md
+      Design safe integration strategy that maintains existing API contracts
+      Plan database migrations, service layer updates, and dependency changes
+      Include API versioning strategy and backward compatibility measures
+      Create rollback plans and deployment strategies with zero-downtime deployment
+      Save output to context/artifacts/architecture.md
+    
+  - step: 4
+    name: "Enhanced Service Implementation"
+    agent: developer
+    task: implement_service_enhancements
+    creates: "src/api-enhanced/"
+    depends_on: [2, 3]
+    description: "Implement service enhancements and new endpoints"
+    instructions: |
+      Load the Developer agent prompt from .claude/agents/developer/prompt.md
+      Reference PRD and architecture documents from previous steps
+      Implement new API endpoints while maintaining existing ones
+      Enhance existing business logic with backward compatibility
+      Update data models and database schemas with proper migrations
+      Include proper error handling, validation, and security measures
+      Save outputs to src/api-enhanced/, src/models-enhanced/, src/services-enhanced/
+    
+  - step: 5
+    name: "Integration Testing Strategy"
+    agent: qa
+    task: create_service_test_plan
+    template: test_plan
+    creates: "artifacts/test-plan.md"
+    depends_on: [3, 4]
+    description: "Create testing strategy for service enhancements"
+    instructions: |
+      Load the QA agent prompt from .claude/agents/qa/prompt.md
+      Reference architecture and implementation from previous steps
+      Apply the test plan template from .claude/templates/test-plan.md
+      Generate testing strategy that ensures existing functionality remains intact
+      Include API contract testing, integration testing, and performance testing
+      Create test scenarios for backward compatibility and migration procedures
+      Plan load testing and security testing for enhanced endpoints
+      Save output to context/artifacts/test-plan.md
+    
+  - step: 6
+    name: "Implementation Review"
+    agent: architect
+    task: review_service_integration
+    creates: "artifacts/review-notes.md"
+    depends_on: [4, 5]
+    description: "Review service enhancements and integration safety"
+    instructions: |
+      Load the Architect agent prompt again from .claude/agents/architect/prompt.md
+      Review all generated artifacts and service enhancement implementation
+      Validate that enhancements integrate safely with existing system
+      Check for API contract compatibility and proper versioning implementation
+      Verify security measures, performance impacts, and scalability considerations
+      Provide recommendations for deployment, monitoring, and rollback procedures
+      Save output to context/artifacts/review-notes.md
+
+outputs:
+  documents:
+    - service-analysis.md
+    - prd.md
+    - architecture.md
+    - test-plan.md
+    - review-notes.md
+  code:
+    - src/api-enhanced/
+    - src/models-enhanced/
+    - src/services-enhanced/
+    - src/middleware-enhanced/
+    - migration-scripts/
+  configuration:
+    - package.json (updated)
+    - docker-compose.yml (updated)
+    - .env.example (updated)
+    - api-docs/ (updated)
+  testing:
+    - tests/integration/
+    - tests/api-enhanced/
+    - tests/performance/
+    - tests/contract/
+
+project_types:
+  - service-modernization
+  - api-enhancement
+  - microservice-extraction
+  - performance-optimization
+  - integration-enhancement
+
+when_to_use:
+  - Service enhancement requires coordinated stories
+  - API versioning or breaking changes needed
+  - Database schema changes required
+  - Performance or scalability improvements needed
+  - Multiple integration points affected
