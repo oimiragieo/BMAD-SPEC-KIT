@@ -32,6 +32,10 @@ The BMAD-Spec Orchestrator Enterprise Edition provides **intelligent software de
 
 ## 🚀 Quick Start
 
+### Requirements
+- Node 18+ (for local JSON validation and rendering)
+- Git (for version control and CI)
+
 ### Simple Activation
 Just describe what you want to build:
 
@@ -54,12 +58,24 @@ Just describe what you want to build:
 🚀 Beginning intelligent workflow execution with 6 specialized agents...
 ```
 
+### JSON‑First Artifacts & Gates (New)
+- Artifacts are produced as JSON first and validated against schemas in `.claude/schemas/`.
+- Render human‑readable Markdown using the built‑in renderer:
+  - `node .claude/tools/renderers/bmad-render.mjs prd .claude/context/artifacts/prd.json > .claude/context/artifacts/prd.md`
+- Enforce deterministic quality gates with a validate → auto‑fix → escalate loop:
+  - `node .claude/tools/gates/gate.mjs --schema .claude/schemas/product_requirements.schema.json --input .claude/context/artifacts/prd.json --gate .claude/context/history/gates/greenfield-fullstack/02-pm.json --autofix 1`
+
+### CI Validation
+- GitHub Action `Validate Artifacts` runs on PRs and `main` to validate all `.claude/context/artifacts/*.json` against schemas.
+- See `.github/workflows/validate-artifacts.yml` and `.claude/tools/ci/validate-all.mjs`.
+
 ## 📁 Enterprise Architecture
 
 ```
 .claude/
 ├── CLAUDE.md                 # Enhanced system instructions with enterprise features
 ├── config.yaml               # Enterprise configuration with performance optimization
+├── schemas/                  # JSON Schemas for machine‑checkable artifacts (PRD, project_brief, architecture, ux_spec, test_plan, user_story, epic, backlog, review_notes, enhancement_classification)
 ├── orchestrator/             # 🆕 Enterprise orchestration engine
 │   ├── context-engine.md            # Structured context management & validation
 │   ├── enhanced-workflow-engine.md  # Intelligent workflow execution  
@@ -69,6 +85,11 @@ Just describe what you want to build:
 │   ├── error-recovery-system.md     # Reliability & failure handling
 │   ├── adaptive-workflow-system.md  # Dynamic workflow selection
 │   └── system-integration-guide.md  # Complete enterprise integration
+├── tools/
+│   ├── renderers/bmad-render.mjs    # JSON → Markdown renderer with schema validation
+│   └── gates/gate.mjs               # Gate runner: validate → auto‑fix → record
+├── docs/structured-outputs.md       # How JSON‑first artifacts & rendering work
+├── rules/manifest.yaml              # Capability‑scoped rules loading profiles
 ├── agents/                   # 6 optimized AI agents (Claude-4 ready)
 │   ├── analyst/   (Maya Chen)       # Enhanced with complexity analysis
 │   ├── pm/        (Alex Rodriguez)  # Enhanced with validation protocols  
@@ -76,11 +97,11 @@ Just describe what you want to build:
 │   ├── developer/ (Jordan)          # Enhanced with quality gates
 │   ├── qa/        (Riley Thompson)  # Enhanced with comprehensive testing
 │   └── ux-expert/ (Sam Parker)      # Enhanced with AI generation
-├── workflows/                # 6 adaptive workflows with intelligence
+├── workflows/                # 6 adaptive workflows with executable specs (inputs/validators/on_fail)
 ├── templates/                # 8 intelligent templates with validation
 ├── tasks/                    # Categorized tasks with quality standards
 ├── system/                   # 🆕 Enterprise governance & SDD principles
-├── context/                  # Advanced session & checkpoint management
+├── context/                  # Advanced session & checkpoint management (persists route_decision)
 ├── examples/                 # Enterprise usage examples
 └── docs/                     # 🆕 Complete enterprise documentation
 ```
@@ -140,7 +161,7 @@ Just describe what you want to build:
 - **Role**: Master coordinator for multi-agent workflows
 - **Claude Thinking**: `think hard` for workflow optimization & agent coordination
 - **New Features**: Intelligent workflow selection, multi-agent orchestration
-- **Outputs**: Optimized workflow plans, coordinated agent execution
+- **Outputs**: Route decision JSON (schema‑validated), optimized workflow plans, coordinated agent execution
 - **Quality Gates**: Cross-agent consistency and workflow validation
 
 ## 🔄 Intelligent Workflow System
@@ -208,6 +229,12 @@ User: "Create a task management web application for small teams with real-time c
 - **Resource Management**: Intelligent allocation of computational resources
 - **Progress Monitoring**: Real-time execution tracking and optimization
 
+### Deterministic Orchestration & Routing (New)
+- **Low‑temp routing**: Orchestrator and routing temperatures set to 0.2 for repeatable decisions.
+- **Route decision schema**: Orchestrator emits a JSON decision validated by `.claude/schemas/route_decision.schema.json` and persists it to `.claude/context/session.json`.
+- **Selective rules loading**: Loads only 1–3 stack‑relevant rules from `.claude/rules/manifest.yaml` to maximize focus.
+- **Per‑agent temperature policy**: Creative agents (UX/Developer) run at moderate temps (≈0.5–0.6); analysis/QA lower (≈0.3–0.4).
+
 ### 3. Intelligent Templates - Adaptive Generation
 - **Conditional Logic**: Templates adapt based on project complexity
 - **Validation Rules**: Automatic quality checking of generated content
@@ -221,6 +248,10 @@ User: "Create a task management web application for small teams with real-time c
 - **Quality Metrics**: 5-dimensional scoring (completeness, consistency, feasibility, clarity, actionability)
 - **Escalation Procedures**: Clear authority chains for unresolved conflicts
 - **Decision Documentation**: Complete audit trail of all quality decisions
+
+### Executable Workflows (New)
+- Each step declares explicit `inputs`, JSON‑first `creates`, `validators` (schema/checklist), `on_fail`, and a `render` block.
+- Gates enforce a small, repeatable loop per step: validate(schema) → auto‑fix (1 try) → escalate → render.
 
 ### 5. Parallel Execution Engine - Performance Optimization
 - **Dependency Graph Analysis**: Identifies parallelization opportunities
@@ -246,22 +277,13 @@ User: "Create a task management web application for small teams with real-time c
 ## 📊 Performance Benchmarks
 
 ### Execution Performance
-- **Simple Projects (1-3 complexity)**: 40% faster due to parallel execution
-- **Medium Projects (4-6 complexity)**: 35% faster due to intelligent routing  
-- **Complex Projects (7-8 complexity)**: 25% faster due to optimization and caching
-- **Enterprise Projects (9-10 complexity)**: 20% faster due to specialized workflows
+- Benchmarks vary by environment; use the gate + schema validation to measure your own pass rates and timings locally.
 
-### Quality Improvements  
-- **Output Consistency**: 85% improvement in cross-agent consistency
-- **Validation Coverage**: 100% of outputs validated vs 0% previously
-- **Error Rate Reduction**: 90% reduction in workflow failures
-- **User Satisfaction**: 90%+ users satisfied with output quality
+### Quality Improvements
+- JSON‑first artifacts and gate checks improve output consistency and validation coverage across workflows.
 
-### Reliability Metrics
-- **Workflow Success Rate**: 99.5% (up from ~75%)
-- **Error Recovery Rate**: 95% of errors automatically recovered
-- **Quality Gate Pass Rate**: 100% of outputs meet minimum thresholds
-- **Context Consistency**: 100% context integrity maintained
+### Reliability Practices
+- Validate → auto‑fix → escalate gates at each step; route decisions logged to session context for traceability.
 
 ## 🎯 Enterprise Use Cases
 

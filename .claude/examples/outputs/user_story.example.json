@@ -1,0 +1,14 @@
+{
+  "id": "US-001",
+  "title": "Create task",
+  "description": "As a user, I can create a task with title, description, assignee, and due date.",
+  "acceptance_criteria": [
+    "Given I am signed in, when I submit a valid task, then it appears in my list",
+    "Given required fields are missing, when I submit, then I see validation errors"
+  ],
+  "priority": "must",
+  "estimate_points": 3,
+  "depends_on": [],
+  "prd_refs": ["FR-002"]
+}
+

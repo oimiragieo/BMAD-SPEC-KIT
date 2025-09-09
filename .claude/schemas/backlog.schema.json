@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec/schemas/backlog.schema.json",
+  "title": "Backlog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["type", "id", "priority", "status"],
+        "properties": {
+          "type": { "type": "string", "enum": ["epic", "story"] },
+          "id": { "type": "string" },
+          "priority": { "type": "string", "enum": ["must", "should", "could"] },
+          "status": { "type": "string", "enum": ["todo", "in_progress", "blocked", "done"] },
+          "sprint": { "type": "string" }
+        }
+      }
+    }
+  }
+}
+

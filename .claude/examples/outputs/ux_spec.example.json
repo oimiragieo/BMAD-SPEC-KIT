@@ -1,0 +1,21 @@
+{
+  "design_principles": ["Clarity over density", "Accessible by default"],
+  "information_architecture": [
+    { "section": "Dashboard", "content": "Overview of tasks and quick filters" }
+  ],
+  "screens": [
+    {
+      "name": "Task List",
+      "purpose": "Browse and manage tasks",
+      "components": [
+        { "id": "search", "type": "input", "label": "Search" },
+        { "id": "table", "type": "table", "label": "Tasks" }
+      ]
+    }
+  ],
+  "flows": [
+    { "name": "Create Task", "steps": ["Open modal", "Fill fields", "Save"] }
+  ],
+  "accessibility": { "guidelines": ["WCAG 2.1 AA", "Focusable controls"] }
+}
+

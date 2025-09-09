@@ -1,0 +1,19 @@
+{
+  "project_name": "Team Task Manager",
+  "summary": "A web app for small teams to manage tasks with real-time updates.",
+  "goals": [
+    "Enable team collaboration",
+    "Provide real-time task updates",
+    "Offer simple deployment"
+  ],
+  "target_users": ["Small teams", "Project coordinators"],
+  "success_metrics": [
+    "DAU > 500",
+    "Task creation to completion time reduced by 25%"
+  ],
+  "scope": {
+    "in_scope": ["User auth", "Task CRUD", "Realtime updates"],
+    "out_of_scope": ["Billing", "SAML SSO"]
+  }
+}
+

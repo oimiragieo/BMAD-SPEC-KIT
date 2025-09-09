@@ -21,7 +21,9 @@ sequence:
     agent: architect
     task: analyze_existing_system
     template: project_documentation
-    creates: "artifacts/ui-analysis.md"
+    inputs:
+      - "enhancement_spec.md"
+    creates: ".claude/context/artifacts/ui-analysis.md"
     description: "Analyze existing frontend application and identify improvement areas"
     instructions: |
       Load the Architect agent prompt from .claude/agents/architect/prompt.md
@@ -30,14 +32,25 @@ sequence:
       Review user feedback, analytics data, and performance metrics if available
       Identify technical debt, outdated patterns, and enhancement opportunities
       Document current state, constraints, and improvement recommendations
-      Save output to context/artifacts/ui-analysis.md
+      Save output to .claude/context/artifacts/ui-analysis.md
     
   - step: 2
     name: "Enhancement Requirements"
     agent: pm
     task: create_brownfield_prd
     template: brownfield_prd
-    creates: "artifacts/prd.md"
+    inputs:
+      - ".claude/context/artifacts/ui-analysis.md"
+    creates: ".claude/context/artifacts/prd.json"
+    validators:
+      - schema: ".claude/schemas/product_requirements.schema.json"
+    on_fail:
+      retry: 1
+      escalate_to: "analyst"
+    render:
+      renderer: "prd"
+      from: ".claude/context/artifacts/prd.json"
+      to: ".claude/context/artifacts/prd.md"
     depends_on: [1]
     description: "Create enhancement-focused Product Requirements Document"
     instructions: |
@@ -47,14 +60,25 @@ sequence:
       Generate requirements focused on UI enhancements with existing system integration
       Include migration strategies, backward compatibility, and rollout plans
       Define user stories that account for existing user behavior and patterns
-      Save output to context/artifacts/prd.md
+      Save output to .claude/context/artifacts/prd.md
     
   - step: 3
     name: "UI/UX Enhancement Design"
     agent: ux-expert
     task: design_ui_enhancements
     template: ui_spec
-    creates: "artifacts/front-end-spec.md"
+    inputs:
+      - ".claude/context/artifacts/prd.json"
+    creates: ".claude/context/artifacts/front-end-spec.json"
+    validators:
+      - schema: ".claude/schemas/ux_spec.schema.json"
+    on_fail:
+      retry: 1
+      escalate_to: "architect"
+    render:
+      renderer: "ux-spec"
+      from: ".claude/context/artifacts/front-end-spec.json"
+      to: ".claude/context/artifacts/front-end-spec.md"
     depends_on: [1, 2]
     description: "Design UI enhancements that integrate with existing system"
     instructions: |
@@ -64,14 +88,26 @@ sequence:
       Design enhancements that respect existing design patterns and user expectations
       Create transition strategies for design changes and new interaction patterns
       Ensure consistency with existing components while introducing improvements
-      Save output to context/artifacts/front-end-spec.md
+      Save output to .claude/context/artifacts/front-end-spec.md
     
   - step: 4
     name: "Integration Architecture"
     agent: architect
     task: design_integration_strategy
     template: brownfield_architecture
-    creates: "artifacts/architecture.md"
+    inputs:
+      - ".claude/context/artifacts/front-end-spec.md"
+      - ".claude/context/artifacts/prd.json"
+    creates: ".claude/context/artifacts/architecture.json"
+    validators:
+      - schema: ".claude/schemas/system_architecture.schema.json"
+    on_fail:
+      retry: 1
+      escalate_to: "pm"
+    render:
+      renderer: "architecture"
+      from: ".claude/context/artifacts/architecture.json"
+      to: ".claude/context/artifacts/architecture.md"
     depends_on: [1, 2, 3]
     description: "Design integration strategy for UI enhancements"
     instructions: |
@@ -82,7 +118,7 @@ sequence:
       Plan component migration, state management updates, and build process changes
       Include testing strategy for ensuring existing functionality remains intact
       Create rollback plans and deployment strategies
-      Save output to context/artifacts/architecture.md
+      Save output to .claude/context/artifacts/architecture.md
     
   - step: 5
     name: "Enhanced Components Implementation"
@@ -105,7 +141,19 @@ sequence:
     agent: qa
     task: create_integration_test_plan
     template: test_plan
-    creates: "artifacts/test-plan.md"
+    inputs:
+      - ".claude/context/artifacts/architecture.md"
+      - "src/components-enhanced/"
+    creates: ".claude/context/artifacts/test-plan.json"
+    validators:
+      - schema: ".claude/schemas/test_plan.schema.json"
+    on_fail:
+      retry: 1
+      escalate_to: "architect"
+    render:
+      renderer: "test-plan"
+      from: ".claude/context/artifacts/test-plan.json"
+      to: ".claude/context/artifacts/test-plan.md"
     depends_on: [4, 5]
     description: "Create testing strategy for UI enhancements"
     instructions: |
@@ -116,13 +164,19 @@ sequence:
       Include regression testing, component testing, and user acceptance testing
       Create test scenarios for migration paths and rollback procedures
       Plan visual regression testing and cross-browser compatibility testing
-      Save output to context/artifacts/test-plan.md
+      Save output to .claude/context/artifacts/test-plan.md
     
   - step: 7
     name: "Implementation Review"
     agent: architect
     task: review_ui_integration
-    creates: "artifacts/review-notes.md"
+    creates: ".claude/context/artifacts/review-notes.json"
+    validators:
+      - schema: ".claude/schemas/review_notes.schema.json"
+    render:
+      renderer: "review-notes"
+      from: ".claude/context/artifacts/review-notes.json"
+      to: ".claude/context/artifacts/review-notes.md"
     depends_on: [5, 6]
     description: "Review UI enhancements and integration safety"
     instructions: |
@@ -132,14 +186,18 @@ sequence:
       Check for potential conflicts, performance impacts, and security considerations
       Verify that rollback strategies are viable and migration paths are clear
       Provide recommendations for deployment, monitoring, and user training
-      Save output to context/artifacts/review-notes.md
+      Save output to .claude/context/artifacts/review-notes.md
 
 outputs:
   documents:
     - ui-analysis.md
+    - prd.json
     - prd.md
+    - front-end-spec.json
     - front-end-spec.md
+    - architecture.json
     - architecture.md
+    - test-plan.json
     - test-plan.md
     - review-notes.md
   code:

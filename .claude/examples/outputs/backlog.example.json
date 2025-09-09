@@ -1,0 +1,7 @@
+{
+  "items": [
+    { "type": "epic", "id": "EP-001", "priority": "must", "status": "in_progress", "sprint": "S1" },
+    { "type": "story", "id": "US-001", "priority": "must", "status": "todo", "sprint": "S1" }
+  ]
+}
+

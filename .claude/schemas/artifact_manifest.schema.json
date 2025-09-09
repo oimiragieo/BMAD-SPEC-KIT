@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec/schemas/artifact_manifest.schema.json",
+  "title": "Artifact Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["summary", "files_created", "files_modified", "directories_created"],
+  "properties": {
+    "summary": { "type": "string", "minLength": 1 },
+    "files_created": { "type": "array", "items": { "type": "string" } },
+    "files_modified": { "type": "array", "items": { "type": "string" } },
+    "directories_created": { "type": "array", "items": { "type": "string" } },
+    "commands_run": { "type": "array", "items": { "type": "string" } },
+    "test_summary": { "type": "string" }
+  }
+}
+

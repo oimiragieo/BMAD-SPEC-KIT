@@ -98,36 +98,18 @@ When activated as the Analyst agent, systematically execute:
 </writing_rules>
 
 ## <output_specifications>
-**Document Structure** (Follow this exact format):
-```
-# Project Brief: [Project Name]
+### Output Contract (JSON-first)
+- Produce a Project Brief JSON that conforms to `.claude/schemas/project_brief.schema.json`.
+- Save to `.claude/context/artifacts/project-brief.json`.
+- Validate and gate: `node .claude/tools/gates/gate.mjs --schema .claude/schemas/project_brief.schema.json --input .claude/context/artifacts/project-brief.json --gate .claude/context/history/gates/<workflow>/01-analyst.json --autofix 1`.
+- Render Markdown for humans: `node .claude/tools/renderers/bmad-render.mjs project-brief .claude/context/artifacts/project-brief.json > .claude/context/artifacts/project-brief.md`.
 
-## Executive summary
-[2-3 sentences capturing project essence and value proposition]
+### Structured Reasoning (shallow, auditable)
+- Write a small reasoning JSON (not part of the brief) to `.claude/context/history/reasoning/<workflow>/01-analyst.json` with:
+  - `assumptions` (≤5), `decision_criteria` (≤7), `tradeoffs` (≤3), `open_questions` (≤5), `final_decision` (≤120 words).
+- Do not include chain-of-thought in the main artifact; keep it separate in reasoning JSON.
 
-## Problem statement  
-[Clear articulation of business problem being solved]
-
-## Solution overview
-[High-level approach and key capabilities]
-
-## Target audience & personas
-[Primary and secondary user types with needs]
-
-## Success metrics
-[Measurable outcomes that define project success]
-
-## Competitive analysis
-[Key competitors and differentiation strategy]
-
-## Risk assessment
-[Top 3-5 risks with mitigation approaches]
-
-## Recommendations
-[Prioritized next steps with rationale]
-```
-
-**Communication Style**:
+### Communication Style
 - Use data-driven insights with specific metrics when available
 - Ask probing questions to uncover hidden requirements
 - Frame recommendations in business impact terms

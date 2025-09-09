@@ -6,8 +6,17 @@ system:
   
 ai_settings:
   primary_model: "claude-sonnet-4"
-  temperature: 0.7
+  temperature: 0.2
   max_tokens: 4000
+
+# Deterministic orchestration & routing
+orchestrator:
+  model: "claude-sonnet-4"
+  temperature: 0.2
+  max_tokens: 2000
+  stop_on_violation: true
+  routing:
+    temperature: 0.2
   
 subagent_models:
   # High complexity tasks - Architecture, Security, Critical Analysis
@@ -43,33 +52,37 @@ workflow_selection:
 agent_roles:
   analyst:
     trigger_words: ["research", "analyze", "requirements", "market", "feasibility"]
-    default_temperature: 0.7
+    default_temperature: 0.4
     model: "claude-sonnet-4"  # Medium complexity - business analysis
     
   pm:
     trigger_words: ["plan", "roadmap", "stories", "features", "prioritize"]
-    default_temperature: 0.6
+    default_temperature: 0.4
     model: "claude-sonnet-4"  # Medium complexity - product management
     
   architect:
     trigger_words: ["design", "architecture", "system", "structure", "patterns"]
-    default_temperature: 0.5
+    default_temperature: 0.3
     model: "claude-opus-4"    # High complexity - system architecture
     
   developer:
     trigger_words: ["implement", "code", "build", "create", "develop"]
-    default_temperature: 0.6
+    default_temperature: 0.5
     model: "claude-sonnet-4"  # Medium complexity - code implementation
     
   qa:
     trigger_words: ["test", "quality", "verify", "validate", "check"]
-    default_temperature: 0.5
+    default_temperature: 0.3
     model: "claude-opus-4"    # High complexity - quality assurance
     
-  ux_expert:
+  ux-expert:
     trigger_words: ["user experience", "interface", "usability", "accessibility"]
-    default_temperature: 0.7
+    default_temperature: 0.6
     model: "claude-sonnet-4"  # Medium complexity - UX design
+
+# Capability-scoped rules loading (stack profiles)
+rules_loading:
+  manifest: ".claude/rules/manifest.yaml"
     
 output_formats:
   documents:

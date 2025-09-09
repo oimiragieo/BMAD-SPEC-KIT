@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec/schemas/system_architecture.schema.json",
+  "title": "System Architecture",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "context",
+    "decisions",
+    "components",
+    "data_model",
+    "integration",
+    "deployment",
+    "security",
+    "performance"
+  ],
+  "properties": {
+    "context": { "type": "string" },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "decision", "rationale", "status"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^ADR-[0-9]{3}$" },
+          "decision": { "type": "string" },
+          "rationale": { "type": "string" },
+          "status": { "type": "string", "enum": ["accepted", "proposed", "rejected"] }
+        }
+      }
+    },
+    "components": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "responsibilities", "technology"],
+        "properties": {
+          "name": { "type": "string" },
+          "responsibilities": { "type": "array", "items": { "type": "string" } },
+          "technology": { "type": "string" }
+        }
+      }
+    },
+    "data_model": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["entities"],
+      "properties": {
+        "entities": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "attributes"],
+            "properties": {
+              "name": { "type": "string" },
+              "attributes": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["name", "type"],
+                  "properties": {
+                    "name": { "type": "string" },
+                    "type": { "type": "string" },
+                    "description": { "type": "string" }
+                  }
+                }
+              },
+              "relationships": { "type": "array", "items": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "integration": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["with", "protocol", "direction"],
+        "properties": {
+          "with": { "type": "string" },
+          "protocol": { "type": "string" },
+          "direction": { "type": "string", "enum": ["inbound", "outbound", "bidirectional"] },
+          "notes": { "type": "string" }
+        }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["strategy"],
+      "properties": {
+        "strategy": { "type": "string" },
+        "diagram": { "type": "string" }
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["threats", "controls"],
+      "properties": {
+        "threats": { "type": "array", "items": { "type": "string" } },
+        "controls": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "performance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["targets"],
+      "properties": {
+        "targets": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["metric", "target"],
+            "properties": {
+              "metric": { "type": "string" },
+              "target": { "type": "string" }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

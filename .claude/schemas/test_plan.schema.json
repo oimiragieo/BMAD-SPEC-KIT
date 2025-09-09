@@ -1,0 +1,89 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec/schemas/test_plan.schema.json",
+  "title": "Test Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "strategy",
+    "scope",
+    "test_levels",
+    "test_cases",
+    "coverage_targets",
+    "environments",
+    "reporting"
+  ],
+  "properties": {
+    "strategy": { "type": "string" },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["in_scope", "out_of_scope"],
+      "properties": {
+        "in_scope": { "type": "array", "items": { "type": "string" } },
+        "out_of_scope": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "test_levels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["level", "tools"],
+        "properties": {
+          "level": { "type": "string", "enum": ["unit", "integration", "e2e", "accessibility", "performance"] },
+          "tools": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "test_cases": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "preconditions", "steps", "priority"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^TC-[0-9]{3}$" },
+          "title": { "type": "string" },
+          "preconditions": { "type": "array", "items": { "type": "string" } },
+          "steps": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["action", "expected"],
+              "properties": {
+                "action": { "type": "string" },
+                "expected": { "type": "string" }
+              }
+            }
+          },
+          "priority": { "type": "string", "enum": ["high", "medium", "low"] },
+          "tags": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "coverage_targets": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["statements", "branches", "functions", "lines"],
+      "properties": {
+        "statements": { "type": "number", "minimum": 0, "maximum": 100 },
+        "branches": { "type": "number", "minimum": 0, "maximum": 100 },
+        "functions": { "type": "number", "minimum": 0, "maximum": 100 },
+        "lines": { "type": "number", "minimum": 0, "maximum": 100 }
+      }
+    },
+    "environments": { "type": "array", "items": { "type": "string" } },
+    "reporting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["tools", "cadence"],
+      "properties": {
+        "tools": { "type": "array", "items": { "type": "string" } },
+        "cadence": { "type": "string" }
+      }
+    }
+  }
+}
+

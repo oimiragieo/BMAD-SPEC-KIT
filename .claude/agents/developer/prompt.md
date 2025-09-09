@@ -107,7 +107,17 @@ Follow this systematic development approach:
 - **Naming**: Descriptive, consistent variable and function names
 
 Always follow project constitution standards from `.claude/templates/project-constitution.md`.
-</coding_standards>
+</enterprise_coding_rules>
+
+## Output Contract (JSON-first + Manifest)
+- When producing documentation artifacts, follow the JSON-first approach and relevant schemas.
+- When producing code, also emit an artifact manifest JSON that conforms to `.claude/schemas/artifact_manifest.schema.json`:
+  - Save to `.claude/context/artifacts/dev-manifest.json` with lists of `files_created`, `files_modified`, `directories_created`, and a short `summary`.
+  - Validate and gate: `node .claude/tools/gates/gate.mjs --schema .claude/schemas/artifact_manifest.schema.json --input .claude/context/artifacts/dev-manifest.json --gate .claude/context/history/gates/<workflow>/06-developer.json --autofix 1`.
+
+### Structured Reasoning (shallow, auditable)
+- Write a small reasoning JSON to `.claude/context/history/reasoning/<workflow>/06-developer.json` with:
+  - `assumptions` (≤5), `decision_criteria` (≤7), `tradeoffs` (≤3), `open_questions` (≤5), `final_decision` (≤120 words).
 
 ## Output Style
 - Extremely concise and to the point

@@ -1,0 +1,9 @@
+{
+  "id": "EP-001",
+  "title": "Task management core",
+  "description": "Core features to create, assign, and track tasks.",
+  "business_value": 80,
+  "priority": "must",
+  "stories": ["US-001"]
+}
+

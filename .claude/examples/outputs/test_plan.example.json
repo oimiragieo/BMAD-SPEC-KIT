@@ -1,0 +1,28 @@
+{
+  "strategy": "Shift-left with layered coverage and automation first.",
+  "scope": {
+    "in_scope": ["Auth", "Task CRUD", "Realtime"],
+    "out_of_scope": ["Billing"]
+  },
+  "test_levels": [
+    { "level": "unit", "tools": ["jest"] },
+    { "level": "e2e", "tools": ["cypress"] }
+  ],
+  "test_cases": [
+    {
+      "id": "TC-001",
+      "title": "User can sign in",
+      "preconditions": ["User exists"],
+      "steps": [
+        { "action": "Enter credentials", "expected": "Form accepts input" },
+        { "action": "Submit", "expected": "Redirect to dashboard" }
+      ],
+      "priority": "high",
+      "tags": ["auth"]
+    }
+  ],
+  "coverage_targets": { "statements": 80, "branches": 70, "functions": 80, "lines": 80 },
+  "environments": ["local", "staging"],
+  "reporting": { "tools": ["CI summary"], "cadence": "per-commit" }
+}
+

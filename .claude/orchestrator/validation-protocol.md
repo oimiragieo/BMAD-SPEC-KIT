@@ -195,7 +195,7 @@ automated_checks:
     - required_sections_present
     - section_length_appropriate
     - format_consistency
-    - template_compliance
+    - json_schema_compliance  # artifacts must pass .claude/schemas/*.schema.json
     
   content_validation:
     - no_placeholder_text
@@ -215,6 +215,16 @@ automated_checks:
     - performance_requirements_realistic
     - security_considerations_included
 ```
+
+## Implementation Hook (Gate Runner)
+
+Use the gate tool to enforce validate → auto-fix → escalate at every step:
+
+```
+node .claude/tools/gates/gate.mjs --schema <schema> --input <json> --gate .claude/context/history/gates/<workflow>/<step>-<agent>.json --autofix 1
+```
+
+If the command exits non-zero, escalate per `on_fail` policy in the workflow YAML.
 
 ## Conflict Resolution System
 

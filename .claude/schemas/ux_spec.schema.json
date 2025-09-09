@@ -1,0 +1,75 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec/schemas/ux_spec.schema.json",
+  "title": "UX Specification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "design_principles",
+    "information_architecture",
+    "screens",
+    "flows",
+    "accessibility"
+  ],
+  "properties": {
+    "design_principles": { "type": "array", "items": { "type": "string" } },
+    "information_architecture": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["section", "content"],
+        "properties": {
+          "section": { "type": "string" },
+          "content": { "type": "string" }
+        }
+      }
+    },
+    "screens": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "purpose", "components"],
+        "properties": {
+          "name": { "type": "string" },
+          "purpose": { "type": "string" },
+          "components": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["id", "type"],
+              "properties": {
+                "id": { "type": "string" },
+                "type": { "type": "string" },
+                "label": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "flows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "steps"],
+        "properties": {
+          "name": { "type": "string" },
+          "steps": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "accessibility": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["guidelines"],
+      "properties": {
+        "guidelines": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
+

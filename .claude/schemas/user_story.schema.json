@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec/schemas/user_story.schema.json",
+  "title": "User Story",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["id", "title", "description", "acceptance_criteria", "priority"],
+  "properties": {
+    "id": { "type": "string", "pattern": "^US-[0-9]{3}$" },
+    "title": { "type": "string", "minLength": 1 },
+    "description": { "type": "string", "minLength": 1 },
+    "acceptance_criteria": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "priority": { "type": "string", "enum": ["must", "should", "could"] },
+    "estimate_points": { "type": "number", "minimum": 0 },
+    "depends_on": { "type": "array", "items": { "type": "string", "pattern": "^US-[0-9]{3}$" } },
+    "links": { "type": "array", "items": { "type": "string" } },
+    "prd_refs": { "type": "array", "items": { "type": "string", "pattern": "^(FR|NFR)-[0-9]{3}$" } }
+  }
+}
+

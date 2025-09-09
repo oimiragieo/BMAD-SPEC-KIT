@@ -1,0 +1,14 @@
+{
+  "summary": "Frontend and backend implementations align with architecture; minor performance and accessibility issues noted.",
+  "findings": [
+    { "area": "Frontend Accessibility", "issues": ["Missing ARIA labels on buttons", "Insufficient color contrast on secondary text"] },
+    { "area": "API Performance", "issues": ["N+1 query on task list", "Missing pagination parameters"] }
+  ],
+  "recommendations": [
+    "Add aria-labels to interactive icons",
+    "Increase contrast ratio for secondary text to 4.5:1",
+    "Introduce pagination on /tasks endpoint",
+    "Add SELECT with joins to avoid N+1"
+  ]
+}
+

@@ -14,14 +14,38 @@ This is an enterprise-grade AI orchestration system that transforms simple user 
 
 Each agent has been enhanced with domain-specific rule sets ensuring enterprise-grade quality in all outputs.
 
-## Activation Triggers
-Activate this system when the user:
-- Says "Create a [type of application]"
-- Says "Build a [type of system]"  
-- Says "I need a [software/app/website]"
-- Says "Use BMAD to..."
-- Provides a specification document
-- Asks for a structured development approach
+## Enhanced Activation System
+
+The BMAD-Spec Orchestrator uses intelligent semantic analysis to detect user intent.
+
+### Activation Analysis
+When you provide input, the system:
+1. Semantic Analysis: Understands creation intent regardless of exact wording
+2. Context Extraction: Identifies project type, complexity, and constraints
+3. Confidence Scoring: Calculates likelihood of a creation or build request
+4. Workflow Selection: Chooses the optimal approach based on context
+
+### Activation Triggers
+The system activates when detecting:
+- Direct Creation Language: "create/build/make/develop [something]"
+- Simplification Requests: "lightweight/simplified/easier version"
+- Integration Intent: "combine/integrate/merge systems"
+- Problem–Solution Patterns: mentions complexity plus solution seeking
+
+### Confidence Thresholds
+- High (0.7+): Immediate activation with auto-workflow selection
+- Medium (0.4–0.7): Brief clarification then activation
+- Low (<0.4): Standard response with activation monitoring
+
+### Activation Validation Checkpoints
+- After analyst output: confirm creation intent and feasibility.
+- After workflow selection: verify agents match project type and goals.
+- After first agent execution: quick course-check; adjust before deep work.
+
+### Activation Recovery Patterns
+- Missed activation: acknowledge, offer BMAD start, preserve context.
+- Wrong workflow: pause, reassess, switch workflow; keep valuable work.
+- Agent confusion: add context, clarify goals, or switch agent/approach.
 
 ## Enhanced Execution Engine
 
@@ -33,19 +57,31 @@ When activated, the system performs intelligent analysis:
 - **Quality Standards**: Establish quality thresholds based on project requirements
 
 ### 2. Intelligent Workflow Selection
-The system uses complexity scoring and project analysis to select workflows:
+The system selects workflows using both complexity and context signals (brownfield vs greenfield, integration intent, simplification markers, time constraints). This complements complexity scoring with semantic routing.
 
 ```yaml
-workflow_selection_logic:
-  complexity_score_1_3: "simplified_rapid_prototype"
-  complexity_score_4_6: "standard_development_workflow" 
-  complexity_score_7_8: "comprehensive_enterprise_workflow"
-  complexity_score_9_10: "complex_system_architecture_workflow"
+intelligent_workflow_selection:
+  decision_factors:
+    - creation_intent_confidence
+    - project_complexity_score
+    - brownfield_vs_greenfield
+    - system_integration_required
+    - simplification_vs_creation
+    - time_constraints_mentioned
   
-  project_type_overrides:
-    brownfield: "legacy_integration_considerations"
-    enterprise: "governance_and_compliance_checks"
-    prototype: "speed_over_completeness"
+  workflow_matrix_examples:
+    greenfield_simple:
+      conditions: ["confidence > 0.7", "complexity 1-3", "no integration"]
+      selected_workflow: simplified_rapid_prototype
+      agents: [analyst, architect, developer, qa]
+    brownfield_integration:
+      conditions: ["confidence > 0.6", "brownfield", "integration true"]
+      selected_workflow: legacy_system_consolidation
+      parallel_execution: [architect, ux-expert]
+    complexity_simplification:
+      conditions: ["simplification_signals present", "deployment complexity"]
+      selected_workflow: architecture_simplification
+      focus: deployment_simplification
 ```
 
 ### 3. Context-Managed Execution
@@ -108,7 +144,7 @@ Each agent operates with enhanced capabilities:
 - **Context Validation**: Verify required inputs before processing
 - **Cross-Agent Awareness**: Reference and validate consistency with previous work
 - **Self-Assessment**: Built-in quality scoring and completeness checks
-- **Structured Outputs**: Generate both human-readable documents and structured data
+- **Structured Outputs**: JSON-first artifacts with Markdown rendered from JSON
 - **Template Intelligence**: Dynamic template adaptation based on project complexity
 
 **Quality Gates:**
@@ -116,6 +152,19 @@ Each agent operates with enhanced capabilities:
 - **Consistency Validation**: Verify alignment between different agents' outputs
 - **Technical Feasibility**: Cross-validate technical decisions across architecture and development
 - **User Experience Alignment**: Ensure UX decisions support business requirements
+
+### Structured Outputs (JSON-first)
+- Produce artifacts as JSON conforming to schemas in `.claude/schemas/`.
+- Save raw JSON to `.claude/context/artifacts/<artifact>.json`.
+- Render Markdown using the built-in renderer:
+  - `node .claude/tools/renderers/bmad-render.mjs prd .claude/examples/outputs/product_requirements.example.json > PRD.md`
+  - `node .claude/tools/renderers/bmad-render.mjs architecture .claude/examples/outputs/system_architecture.example.json > ARCHITECTURE.md`
+
+### Routing Contract & Gates
+- Orchestrator emits a route decision JSON validated by `.claude/schemas/route_decision.schema.json` and persists it to `.claude/context/session.json`.
+- Enforce validate → auto-fix → escalate at every step with the gate tool:
+  - `node .claude/tools/gates/gate.mjs --schema <schema> --input <json> --gate .claude/context/history/gates/<workflow>/<step>-<agent>.json --autofix 1`
+
 
 ### 6. Error Recovery & Reliability
 Enterprise-grade error handling:
@@ -148,7 +197,8 @@ As the UX EXPERT, the interface...
 Always load files using these paths:
 - Agents: `.claude/agents/[name]/prompt.md`
 - Workflows: `.claude/workflows/[name].yaml`
-- Templates: `.claude/templates/[name].md`
+- Schemas: `.claude/schemas/*.schema.json`
+- Renderer: `.claude/tools/renderers/bmad-render.mjs`
 - Tasks: `.claude/tasks/[category]/[name].md`
 - Context: `.claude/context/session.json`
 - **Enterprise Rules**: `.claude/rules/` (comprehensive guidelines for all agents)
@@ -193,6 +243,7 @@ Each agent follows comprehensive quality standards:
 5. **Follow all enterprise rules from `.claude/rules/` directory**
 6. Generate complete, production-ready outputs
 7. Explain what you're doing at each step
+8. Produce JSON-first artifacts that pass schema validation; render Markdown from JSON
 
 ## Enterprise-Safe Workflow Acceleration
 **NEVER use `--dangerously-skip-permissions`** - Instead use Smart Enterprise Mode:

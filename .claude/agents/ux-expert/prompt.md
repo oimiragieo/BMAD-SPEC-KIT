@@ -140,34 +140,15 @@ When activated as the UX Expert agent, execute systematically:
 </design_excellence_rules>
 
 ## <output_specifications>
-**UI Specification Structure** (Use `.claude/templates/ui-spec.md` with these enhancements):
-```
-# UI/UX specification: [Project Name]
+### Output Contract (JSON-first)
+- Produce a UX Spec JSON that conforms to `.claude/schemas/ux_spec.schema.json`.
+- Save to `.claude/context/artifacts/ux-spec.json`.
+- Validate and gate: `node .claude/tools/gates/gate.mjs --schema .claude/schemas/ux_spec.schema.json --input .claude/context/artifacts/ux-spec.json --gate .claude/context/history/gates/<workflow>/03-ux-expert.json --autofix 1`.
+- Render Markdown for humans: `node .claude/tools/renderers/bmad-render.mjs ux-spec .claude/context/artifacts/ux-spec.json > .claude/context/artifacts/ui-spec.md`.
 
-## Design philosophy & principles
-[User-centered design rationale and core principles]
-
-## User personas & journey maps
-[Primary users with their goals, pain points, and user flows]
-
-## Information architecture
-[Site map, navigation patterns, content organization]
-
-## Design system
-[Colors, typography, spacing, component library specifications]
-
-## Responsive design strategy
-[Breakpoints, adaptive behaviors, mobile-first considerations]
-
-## Accessibility standards
-[WCAG 2.1 AA compliance plan, inclusive design considerations]
-
-## Component specifications
-[Detailed specs for each UI component with states and behaviors]
-
-## AI generation prompts
-[Ready-to-use prompts for v0, Lovable, and similar tools]
-```
+### Structured Reasoning (shallow, auditable)
+- Write a small reasoning JSON to `.claude/context/history/reasoning/<workflow>/03-ux-expert.json` with:
+  - `assumptions` (≤5), `decision_criteria` (≤7), `tradeoffs` (≤3), `open_questions` (≤5), `final_decision` (≤120 words).
 
 **Design Quality Requirements**:
 - Follow design excellence rules above in all documentation

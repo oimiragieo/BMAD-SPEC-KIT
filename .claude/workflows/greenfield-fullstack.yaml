@@ -21,21 +21,45 @@ sequence:
     agent: analyst
     task: analyze_specification
     template: project_brief
-    creates: "artifacts/project-brief.md"
+    inputs:
+      - "user_spec.md"
+    creates: ".claude/context/artifacts/project-brief.json"
+    validators:
+      - schema: ".claude/schemas/project_brief.schema.json"
+      - checklist: ".claude/checklists/story-draft-checklist.md"
+    on_fail:
+      retry: 1
+      escalate_to: "pm"
+    render:
+      renderer: "project-brief"
+      from: ".claude/context/artifacts/project-brief.json"
+      to: ".claude/context/artifacts/project-brief.md"
     description: "Analyze user requirements and create project brief"
     instructions: |
       Load the analyst agent prompt from .claude/agents/analyst/prompt.md
       Apply the project brief template from .claude/templates/project-brief.md
       Generate comprehensive project analysis including market context and technical feasibility
       Focus on full-stack requirements including frontend, backend, and integration needs
-      Save output to context/artifacts/project-brief.md
+      Save output to .claude/context/artifacts/project-brief.md
     
   - step: 2
     name: "Requirements Documentation"
     agent: pm
     task: create_prd
     template: prd
-    creates: "artifacts/prd.md"
+    inputs:
+      - ".claude/context/artifacts/project-brief.json"
+    creates: ".claude/context/artifacts/prd.json"
+    validators:
+      - schema: ".claude/schemas/product_requirements.schema.json"
+      - checklist: ".claude/checklists/story-draft-checklist.md"
+    on_fail:
+      retry: 1
+      escalate_to: "analyst"
+    render:
+      renderer: "prd"
+      from: ".claude/context/artifacts/prd.json"
+      to: ".claude/context/artifacts/prd.md"
     depends_on: [1]
     description: "Create Product Requirements Document"
     instructions: |
@@ -44,14 +68,25 @@ sequence:
       Apply the PRD template from .claude/templates/prd.md
       Generate detailed requirements document covering frontend, backend, and integration requirements
       Include user stories, API specifications, data models, and user flows
-      Save output to context/artifacts/prd.md
+      Save output to .claude/context/artifacts/prd.md
     
   - step: 3
     name: "UI/UX Design"
     agent: ux-expert
     task: design_interface
     template: ui_spec
-    creates: "artifacts/front-end-spec.md"
+    inputs:
+      - ".claude/context/artifacts/prd.json"
+    creates: ".claude/context/artifacts/ux-spec.json"
+    validators:
+      - schema: ".claude/schemas/ux_spec.schema.json"
+    on_fail:
+      retry: 1
+      escalate_to: "architect"
+    render:
+      renderer: "ux-spec"
+      from: ".claude/context/artifacts/ux-spec.json"
+      to: ".claude/context/artifacts/front-end-spec.md"
     depends_on: [2]
     description: "Design user interface and experience"
     instructions: |
@@ -60,13 +95,15 @@ sequence:
       Apply the UI spec template from .claude/templates/ui-spec.md
       Generate comprehensive UI/UX specifications including wireframes and user flows
       Design responsive interfaces and interaction patterns
-      Save output to context/artifacts/front-end-spec.md
+      Save output to .claude/context/artifacts/front-end-spec.md
     
   - step: 4
     name: "AI UI Generation Prompt"
     agent: ux-expert
     task: generate_ai_prompt
-    creates: "artifacts/v0-prompt.md"
+    inputs:
+      - ".claude/context/artifacts/front-end-spec.md"
+    creates: ".claude/context/artifacts/v0-prompt.md"
     depends_on: [3]
     optional: true
     description: "Generate AI prompt for UI generation tools"
@@ -75,14 +112,26 @@ sequence:
       Reference the front-end spec from step 3
       Generate optimized prompts for AI UI tools like v0, Lovable, or similar
       Include specific component requirements, styling preferences, and interactions
-      Save output to context/artifacts/v0-prompt.md
+      Save output to .claude/context/artifacts/v0-prompt.md
     
   - step: 5
     name: "Full-Stack Architecture"
     agent: architect
     task: design_architecture
     template: fullstack_architecture
-    creates: "artifacts/fullstack-architecture.md"
+    inputs:
+      - ".claude/context/artifacts/prd.json"
+      - ".claude/context/artifacts/ux-spec.json"
+    creates: ".claude/context/artifacts/system-architecture.json"
+    validators:
+      - schema: ".claude/schemas/system_architecture.schema.json"
+    on_fail:
+      retry: 1
+      escalate_to: "pm"
+    render:
+      renderer: "architecture"
+      from: ".claude/context/artifacts/system-architecture.json"
+      to: ".claude/context/artifacts/fullstack-architecture.md"
     depends_on: [2, 3]
     description: "Design comprehensive full-stack architecture"
     instructions: |
@@ -92,13 +141,16 @@ sequence:
       Design both frontend and backend architecture including database schema
       Include deployment strategy, API design, state management, and security considerations
       Consider integration points between frontend and backend
-      Save output to context/artifacts/fullstack-architecture.md
+      Save output to .claude/context/artifacts/fullstack-architecture.md
     
   - step: 6
     name: "Frontend Implementation"
     agent: developer
     task: implement_frontend
     creates: "src/frontend/"
+    inputs:
+      - ".claude/context/artifacts/front-end-spec.md"
+      - ".claude/context/artifacts/fullstack-architecture.md"
     depends_on: [3, 5]
     description: "Implement frontend components and pages"
     instructions: |
@@ -114,6 +166,8 @@ sequence:
     agent: developer
     task: implement_backend
     creates: "src/backend/"
+    inputs:
+      - ".claude/context/artifacts/fullstack-architecture.md"
     depends_on: [5]
     description: "Implement backend API and services"
     instructions: |
@@ -129,7 +183,19 @@ sequence:
     agent: qa
     task: create_test_plan
     template: test_plan
-    creates: "artifacts/test-plan.md"
+    inputs:
+      - ".claude/context/artifacts/front-end-spec.md"
+      - ".claude/context/artifacts/fullstack-architecture.md"
+    creates: ".claude/context/artifacts/test-plan.json"
+    validators:
+      - schema: ".claude/schemas/test_plan.schema.json"
+    on_fail:
+      retry: 1
+      escalate_to: "architect"
+    render:
+      renderer: "test-plan"
+      from: ".claude/context/artifacts/test-plan.json"
+      to: ".claude/context/artifacts/test-plan.md"
     depends_on: [6, 7]
     description: "Create comprehensive testing strategy"
     instructions: |
@@ -139,13 +205,23 @@ sequence:
       Generate testing strategy including unit, integration, and e2e tests
       Include frontend testing, API testing, and full user journey tests
       Create test scenarios for all user flows and edge cases
-      Save output to context/artifacts/test-plan.md
+      Save output to .claude/context/artifacts/test-plan.md
     
   - step: 9
     name: "Implementation Review"
     agent: architect
     task: review_implementation
-    creates: "artifacts/review-notes.md"
+    inputs:
+      - "src/frontend/"
+      - "src/backend/"
+      - ".claude/context/artifacts/test-plan.md"
+    creates: ".claude/context/artifacts/review-notes.json"
+    validators:
+      - schema: ".claude/schemas/review_notes.schema.json"
+    render:
+      renderer: "review-notes"
+      from: ".claude/context/artifacts/review-notes.json"
+      to: ".claude/context/artifacts/review-notes.md"
     depends_on: [6, 7, 8]
     description: "Review and validate full-stack implementation"
     instructions: |
@@ -155,14 +231,19 @@ sequence:
       Check integration points between frontend and backend
       Verify security measures, performance considerations, and best practices
       Provide improvement recommendations and deployment guidance
-      Save output to context/artifacts/review-notes.md
+      Save output to .claude/context/artifacts/review-notes.md
 
 outputs:
   documents:
+    - project-brief.json
     - project-brief.md
+    - prd.json
     - prd.md
+    - ux-spec.json
     - front-end-spec.md
+    - system-architecture.json
     - fullstack-architecture.md
+    - test-plan.json
     - test-plan.md
     - review-notes.md
     - v0-prompt.md (optional)

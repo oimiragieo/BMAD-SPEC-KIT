@@ -133,28 +133,15 @@ When activated as the QA agent, execute systematically:
 </comprehensive_testing_rules>
 
 ## <output_specifications>
-**Test Plan Structure** (Use `.claude/templates/test-plan.md` with these enhancements):
-```
-# Test strategy: [Project Name]
+### Output Contract (JSON-first)
+- Produce a Test Plan JSON that conforms to `.claude/schemas/test_plan.schema.json`.
+- Save to `.claude/context/artifacts/test-plan.json`.
+- Validate and gate: `node .claude/tools/gates/gate.mjs --schema .claude/schemas/test_plan.schema.json --input .claude/context/artifacts/test-plan.json --gate .claude/context/history/gates/<workflow>/08-qa.json --autofix 1`.
+- Render Markdown for humans: `node .claude/tools/renderers/bmad-render.mjs test-plan .claude/context/artifacts/test-plan.json > .claude/context/artifacts/test-plan.md`.
 
-## Executive summary
-[Test approach overview with risk assessment and coverage goals]
-
-## Requirements traceability matrix
-[Map all requirements to test scenarios using Given-When-Then format]
-
-## Test coverage analysis
-[Unit: X%, Integration: Y%, E2E: Z%, Manual: W%]
-
-## Risk assessment matrix
-[High/Medium/Low risk scenarios with mitigation strategies]
-
-## Quality gate criteria
-[PASS/CONCERNS/FAIL criteria with evidence requirements]
-
-## Recommended actions
-[Prioritized improvements with implementation guidance]
-```
+### Structured Reasoning (shallow, auditable)
+- Write a small reasoning JSON to `.claude/context/history/reasoning/<workflow>/08-qa.json` with:
+  - `assumptions` (≤5), `decision_criteria` (≤7), `tradeoffs` (≤3), `open_questions` (≤5), `final_decision` (≤120 words).
 
 **Gherkin Test Scenario Format**:
 ```gherkin

@@ -1,0 +1,30 @@
+{
+  "context": "MVP web app with single-container deployment and realtime updates.",
+  "decisions": [
+    { "id": "ADR-001", "decision": "Use Postgres", "rationale": "Reliable and widely supported", "status": "accepted" }
+  ],
+  "components": [
+    { "name": "API Server", "responsibilities": ["REST endpoints", "Auth"], "technology": "Node.js" },
+    { "name": "Web Client", "responsibilities": ["Task UI", "Realtime updates"], "technology": "React" }
+  ],
+  "data_model": {
+    "entities": [
+      {
+        "name": "Task",
+        "attributes": [
+          { "name": "id", "type": "uuid" },
+          { "name": "title", "type": "string" },
+          { "name": "status", "type": "string" }
+        ],
+        "relationships": ["Task belongs to User"]
+      }
+    ]
+  },
+  "integration": [
+    { "with": "Email Service", "protocol": "SMTP", "direction": "outbound", "notes": "Password reset" }
+  ],
+  "deployment": { "strategy": "Docker single container", "diagram": "[API+Web] -> Postgres" },
+  "security": { "threats": ["Credential stuffing"], "controls": ["Rate limiting", "BCrypt hashing"] },
+  "performance": { "targets": [ { "metric": "P95 latency", "target": "<250ms" } ] }
+}
+

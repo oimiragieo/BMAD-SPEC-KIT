@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec/schemas/project_brief.schema.json",
+  "title": "Project Brief",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project_name",
+    "summary",
+    "goals",
+    "target_users",
+    "success_metrics",
+    "scope"
+  ],
+  "properties": {
+    "project_name": { "type": "string", "minLength": 1 },
+    "summary": { "type": "string", "minLength": 1 },
+    "goals": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "target_users": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "success_metrics": { "type": "array", "minItems": 1, "items": { "type": "string" } },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["in_scope", "out_of_scope"],
+      "properties": {
+        "in_scope": { "type": "array", "items": { "type": "string" } },
+        "out_of_scope": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
+

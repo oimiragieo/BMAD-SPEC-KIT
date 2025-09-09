@@ -1,0 +1,7 @@
+{
+  "level": "small_feature",
+  "rationale": "Add subtasks without changing core data model",
+  "recommended_workflow": "brownfield-fullstack",
+  "indicators": ["Existing codebase", "UI + API change", "No breaking changes"]
+}
+

@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec/schemas/enhancement_classification.schema.json",
+  "title": "Enhancement Classification",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["level", "rationale", "recommended_workflow"],
+  "properties": {
+    "level": { "type": "string", "enum": ["fix", "small_feature", "major_enhancement"] },
+    "rationale": { "type": "string" },
+    "recommended_workflow": { "type": "string", "enum": ["brownfield-fullstack", "brownfield-ui", "brownfield-service", "greenfield-fullstack", "greenfield-ui", "greenfield-service"] },
+    "indicators": { "type": "array", "items": { "type": "string" } }
+  }
+}
+

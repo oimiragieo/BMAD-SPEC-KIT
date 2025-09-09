@@ -1,0 +1,37 @@
+{
+  "title": "Team Task Manager PRD",
+  "overview": "Core features for creating, assigning, and tracking tasks in small teams.",
+  "personas": [
+    {
+      "name": "Team Lead",
+      "goals": ["Assign tasks", "Track progress"],
+      "pain_points": ["Lack of visibility", "Too many tools"]
+    }
+  ],
+  "features": [
+    {
+      "id": "FR-001",
+      "title": "User Authentication",
+      "description": "Email/password login with password reset.",
+      "acceptance_criteria": [
+        "Users can sign up and log in",
+        "Password reset email is sent"
+      ],
+      "priority": "must",
+      "dependencies": []
+    },
+    {
+      "id": "FR-002",
+      "title": "Task CRUD",
+      "description": "Create, update, and delete tasks with assignees and due dates.",
+      "acceptance_criteria": [
+        "Task has title, description, status, assignee, due date"
+      ],
+      "priority": "must",
+      "dependencies": ["FR-001"]
+    }
+  ],
+  "non_functional_requirements": ["P95 latency < 250ms", "Uptime 99.9%"],
+  "constraints": ["Single-container deployment for MVP"]
+}
+
