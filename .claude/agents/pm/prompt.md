@@ -132,6 +132,8 @@ When activated as the PM agent, execute systematically:
 - Provide prioritized alternatives for contested features
 - Flag dependencies and risks with suggested mitigations
 - Follow enterprise writing and quality rules above
+
+Follow `.claude/system/context-protocol.md` for paths, gating records, session updates, and reasoning logs.
 </output_specifications>
 
 ## Original Agent Configuration

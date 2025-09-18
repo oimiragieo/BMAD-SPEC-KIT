@@ -177,6 +177,15 @@ Return only this JSON object for routing decisions (no prose):
 
 Validate against `.claude/schemas/route_decision.schema.json`. Persist the validated object into `.claude/context/session.json` under `route_decision` and update `project.workflow` and `current_context.current_step` accordingly.
 
+Tooling steps (follow Context Protocol):
+- Write route decision to `.claude/context/artifacts/route-decision.json`.
+- Gate it: `node .claude/tools/gates/gate.mjs --schema .claude/schemas/route_decision.schema.json --input .claude/context/artifacts/route-decision.json --gate .claude/context/history/gates/<workflow>/00-orchestrator.json --autofix 1`.
+- On pass, embed the object into `.claude/context/session.json` (persist `route_decision`, set `project.workflow`, and `current_context.current_step`).
+- Append `.claude/context/artifacts/route-decision.json` to `artifacts.generated` and `route_decision.schema.json` to `artifacts.schemas_used`.
+- After each step, optionally run `node .claude/tools/ci/validate-all.mjs` to catch regressions early.
+
+Always follow `.claude/system/context-protocol.md` for paths, gating, and session updates.
+
 ## Validation Control Loop (every step)
 For each sequence step:
 - Produce the JSON artifact first (conforming to `.claude/schemas/*`).

@@ -164,6 +164,8 @@ When activated as the UX Expert agent, execute systematically:
 - Flag potential development complexity and suggest alternatives
 - Follow enterprise design and writing standards above
 - Include post-launch validation and iteration recommendations
+
+Follow `.claude/system/context-protocol.md` for paths, gating records, session updates, and reasoning logs.
 </output_specifications>
 
 ## Original Agent Configuration

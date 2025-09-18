@@ -46,11 +46,14 @@ When activated, follow this structured approach:
    - Include Mermaid diagrams and system interaction flows
    - Provide implementation guidance that prevents common pitfalls
    - Validate architecture against all requirements
+   - Follow `.claude/system/context-protocol.md` for artifact paths, gating, rendering, session updates, and reasoning logs.
 </execution_process>
 
 ## <available_templates>
 **Primary Templates** (Use these exact file paths):
 - `.claude/templates/architecture.md` - Core system architecture document
+- `.claude/templates/fullstack-architecture.md` - Full-stack architecture for new builds
+- `.claude/templates/brownfield-architecture.md` - Integration plan for existing systems
 - `.claude/templates/project-constitution.md` - Technical governance and standards
 
 **Supporting Tasks** (Reference these for workflow execution):

@@ -48,6 +48,14 @@ Follow this systematic development approach:
    - Perform code reviews and self-assessment
    - Optimize performance and security measures
    - Document implementation decisions and setup instructions
+
+## <tooling_contract>
+- Follow `.claude/system/context-protocol.md`.
+- Read required artifacts from `.claude/context/artifacts/` (e.g., `fullstack-architecture.md`, `ui-spec.md`, `prd.md`).
+- Save code into directories specified by the active workflow; if unspecified, default to `src/frontend`, `src/backend`, `tests/*` with clear structure.
+- Maintain a developer manifest at `.claude/context/artifacts/dev-manifest.json` listing files/dirs created or modified.
+- Gate the manifest: `node .claude/tools/gates/gate.mjs --schema .claude/schemas/artifact_manifest.schema.json --input .claude/context/artifacts/dev-manifest.json --gate .claude/context/history/gates/<workflow>/06-developer.json --autofix 1`.
+- Update `.claude/context/session.json.artifacts.generated` with added artifacts and code paths.
 </execution_process>
 
 ## <available_templates>

@@ -13,8 +13,9 @@ const map = [
   { pattern: /^project-brief\.json$/, schema: 'project_brief.schema.json' },
   { pattern: /^prd\.json$/, schema: 'product_requirements.schema.json' },
   { pattern: /^(system-architecture|frontend-architecture|architecture)\.json$/, schema: 'system_architecture.schema.json' },
-  { pattern: /^(ux-spec|front-end-spec)\.json$/, schema: 'ux_spec.schema.json' },
+  { pattern: /^(ux-spec|front-end-spec|ui-enhancement-spec)\.json$/, schema: 'ux_spec.schema.json' },
   { pattern: /^test-plan\.json$/, schema: 'test_plan.schema.json' },
+  { pattern: /^route-decision\.json$/, schema: 'route_decision.schema.json' },
   { pattern: /^dev-manifest\.json$/, schema: 'artifact_manifest.schema.json' },
   { pattern: /^backlog\.json$/, schema: 'backlog.schema.json' },
   { pattern: /^epic-.*\.json$/, schema: 'epic.schema.json' },
@@ -43,4 +44,3 @@ if (fs.existsSync(artifactsDir)) {
 }
 
 process.exit(ok ? 0 : 1);
-

@@ -95,7 +95,7 @@ sequence:
     template: ui_spec
     inputs:
       - ".claude/context/artifacts/prd.json"
-    creates: ".claude/context/artifacts/ui-enhancement-spec.json"
+    creates: ".claude/context/artifacts/ux-spec.json"
     validators:
       - schema: ".claude/schemas/ux_spec.schema.json"
     on_fail:
@@ -103,8 +103,8 @@ sequence:
       escalate_to: "architect"
     render:
       renderer: "ux-spec"
-      from: ".claude/context/artifacts/ui-enhancement-spec.json"
-      to: ".claude/context/artifacts/ui-enhancement-spec.md"
+      from: ".claude/context/artifacts/ux-spec.json"
+      to: ".claude/context/artifacts/ui-spec.md"
     depends_on: [2, 3]
     optional: true
     condition: frontend_changes_required
@@ -116,7 +116,7 @@ sequence:
       Design enhancements that maintain consistency with existing UI patterns
       Plan component updates, new interactions, and design system integration
       Consider user experience implications of changes to existing workflows
-      Save output to .claude/context/artifacts/ui-enhancement-spec.md
+      Save output to .claude/context/artifacts/ui-spec.md
     
   - step: 5
     name: "Integration Architecture"
@@ -125,7 +125,7 @@ sequence:
     template: brownfield_architecture
     inputs:
       - ".claude/context/artifacts/prd.json"
-      - ".claude/context/artifacts/ui-enhancement-spec.md"
+      - ".claude/context/artifacts/ui-spec.md"
     creates: ".claude/context/artifacts/architecture.json"
     validators:
       - schema: ".claude/schemas/system_architecture.schema.json"
@@ -242,8 +242,8 @@ outputs:
     - system-analysis.md
     - prd.json
     - prd.md
-    - ui-enhancement-spec.json (optional)
-    - ui-enhancement-spec.md (optional)
+    - ux-spec.json (optional)
+    - ui-spec.md (optional)
     - architecture.json (conditional)
     - architecture.md (conditional)
     - test-plan.json

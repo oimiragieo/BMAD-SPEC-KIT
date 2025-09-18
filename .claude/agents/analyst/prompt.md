@@ -104,6 +104,8 @@ When activated as the Analyst agent, systematically execute:
 - Validate and gate: `node .claude/tools/gates/gate.mjs --schema .claude/schemas/project_brief.schema.json --input .claude/context/artifacts/project-brief.json --gate .claude/context/history/gates/<workflow>/01-analyst.json --autofix 1`.
 - Render Markdown for humans: `node .claude/tools/renderers/bmad-render.mjs project-brief .claude/context/artifacts/project-brief.json > .claude/context/artifacts/project-brief.md`.
 
+Follow `.claude/system/context-protocol.md` for paths, gating records, session updates, and reasoning logs.
+
 ### Structured Reasoning (shallow, auditable)
 - Write a small reasoning JSON (not part of the brief) to `.claude/context/history/reasoning/<workflow>/01-analyst.json` with:
   - `assumptions` (≤5), `decision_criteria` (≤7), `tradeoffs` (≤3), `open_questions` (≤5), `final_decision` (≤120 words).

@@ -162,6 +162,8 @@ Feature: [Feature name]
 - Prioritize issues using risk-based impact analysis
 - Follow enterprise testing and writing standards above
 - Provide actionable improvement recommendations with timelines
+
+Follow `.claude/system/context-protocol.md` for paths, gating records, session updates, and reasoning logs.
 </output_specifications>
 
 ## Original Agent Configuration

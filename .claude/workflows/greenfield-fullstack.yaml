@@ -86,7 +86,7 @@ sequence:
     render:
       renderer: "ux-spec"
       from: ".claude/context/artifacts/ux-spec.json"
-      to: ".claude/context/artifacts/front-end-spec.md"
+      to: ".claude/context/artifacts/ui-spec.md"
     depends_on: [2]
     description: "Design user interface and experience"
     instructions: |
@@ -95,14 +95,14 @@ sequence:
       Apply the UI spec template from .claude/templates/ui-spec.md
       Generate comprehensive UI/UX specifications including wireframes and user flows
       Design responsive interfaces and interaction patterns
-      Save output to .claude/context/artifacts/front-end-spec.md
+      Save output to .claude/context/artifacts/ui-spec.md
     
   - step: 4
     name: "AI UI Generation Prompt"
     agent: ux-expert
     task: generate_ai_prompt
     inputs:
-      - ".claude/context/artifacts/front-end-spec.md"
+      - ".claude/context/artifacts/ui-spec.md"
     creates: ".claude/context/artifacts/v0-prompt.md"
     depends_on: [3]
     optional: true
@@ -149,7 +149,7 @@ sequence:
     task: implement_frontend
     creates: "src/frontend/"
     inputs:
-      - ".claude/context/artifacts/front-end-spec.md"
+      - ".claude/context/artifacts/ui-spec.md"
       - ".claude/context/artifacts/fullstack-architecture.md"
     depends_on: [3, 5]
     description: "Implement frontend components and pages"
@@ -184,7 +184,7 @@ sequence:
     task: create_test_plan
     template: test_plan
     inputs:
-      - ".claude/context/artifacts/front-end-spec.md"
+    - ".claude/context/artifacts/ui-spec.md"
       - ".claude/context/artifacts/fullstack-architecture.md"
     creates: ".claude/context/artifacts/test-plan.json"
     validators:
@@ -240,7 +240,7 @@ outputs:
     - prd.json
     - prd.md
     - ux-spec.json
-    - front-end-spec.md
+    - ui-spec.md
     - system-architecture.json
     - fullstack-architecture.md
     - test-plan.json
