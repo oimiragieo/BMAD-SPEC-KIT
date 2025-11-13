@@ -20,6 +20,7 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { getAgentDefinition, getAgentCostEstimate } from '../agents/agent-definitions.mjs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -69,8 +70,8 @@ class AgentSpawner {
 
     console.log(`  🚀 Spawning agent: ${agent} (step ${step})`);
 
-    // Load agent prompt
-    const agentPrompt = await this.loadAgentPrompt(agent);
+    // Load agent definition and prompt (with tool restrictions and model selection)
+    const agentConfig = await this.loadAgentPrompt(agent);
 
     // Prepare context for agent
     const contextData = this.prepareContext(stepConfig, agentInputs);
@@ -80,16 +81,17 @@ class AgentSpawner {
 
     // Build complete prompt
     const fullPrompt = this.buildPrompt({
-      agentPrompt,
+      agentPrompt: agentConfig.systemPrompt,
       contextData,
       rules,
       template,
       task,
-      stepConfig
+      stepConfig,
+      agentDefinition: agentConfig.agentDefinition
     });
 
-    // Determine model and timeout
-    const model = this.selectModel(agent, stepConfig);
+    // Use model from agent definition (SDK best practice)
+    const model = agentConfig.model;
     const timeout = CONFIG.TIMEOUTS[agent] || CONFIG.TIMEOUTS.default;
 
     // Create Task invocation
@@ -156,16 +158,46 @@ class AgentSpawner {
   }
 
   /**
-   * Load agent prompt from file
+   * Load agent prompt using programmatic agent definitions
+   * Implements Claude SDK best practice: programmatic agent definitions with tool restrictions
    */
   async loadAgentPrompt(agentName) {
-    const promptPath = path.join(CONFIG.PATHS.AGENTS, agentName, 'prompt.md');
-
     try {
-      const content = await fs.readFile(promptPath, 'utf-8');
-      return content;
+      // Get programmatic agent definition
+      const agentDef = getAgentDefinition(agentName);
+
+      // Load system prompt (from definition or from file)
+      const systemPrompt = await agentDef.loadSystemPrompt();
+
+      // Log agent configuration for transparency
+      console.log(`    📋 Agent: ${agentDef.title} (${agentDef.icon})`);
+      console.log(`    🤖 Model: ${agentDef.model}`);
+      console.log(`    🔧 Tools: ${agentDef.tools.join(', ')}`);
+
+      // Estimate cost for this agent
+      const costEstimate = getAgentCostEstimate(agentName, 10000, 2000);
+      console.log(`    💰 Est. cost: $${costEstimate.estimated_cost.toFixed(6)}`);
+
+      return {
+        systemPrompt,
+        agentDefinition: agentDef,
+        toolRestrictions: agentDef.tools,
+        model: agentDef.model
+      };
+
     } catch (error) {
-      throw new Error(`Failed to load agent prompt: ${promptPath}`);
+      // Fallback to file-based loading for backward compatibility
+      console.warn(`    ⚠ Using fallback file-based loading for ${agentName}`);
+
+      const promptPath = path.join(CONFIG.PATHS.AGENTS, agentName, 'prompt.md');
+      const content = await fs.readFile(promptPath, 'utf-8');
+
+      return {
+        systemPrompt: content,
+        agentDefinition: null,
+        toolRestrictions: null,
+        model: 'claude-sonnet-4-5' // Default model
+      };
     }
   }
 
@@ -246,16 +278,29 @@ class AgentSpawner {
   }
 
   /**
-   * Build complete prompt for agent
+   * Build complete prompt for agent with tool restrictions
    */
-  buildPrompt({ agentPrompt, contextData, rules, template, task, stepConfig }) {
+  buildPrompt({ agentPrompt, contextData, rules, template, task, stepConfig, agentDefinition }) {
     const sections = [];
 
     // 1. Agent prompt (core identity and instructions)
     sections.push('# Agent Instructions');
     sections.push(agentPrompt);
 
-    // 2. Enterprise rules
+    // 2. Tool restrictions (SDK best practice: principle of least privilege)
+    if (agentDefinition && agentDefinition.tools) {
+      sections.push('\n# Tool Access Restrictions');
+      sections.push('For security and efficiency, you have access to the following tools ONLY:');
+      sections.push('');
+      for (const tool of agentDefinition.tools) {
+        sections.push(`- ${tool}`);
+      }
+      sections.push('');
+      sections.push('Do NOT attempt to use tools outside this list. They will not be available.');
+      sections.push('This follows the principle of least privilege for secure agent execution.');
+    }
+
+    // 3. Enterprise rules
     if (rules && rules.length > 0) {
       sections.push('\n# Enterprise Rules & Standards');
       sections.push('You MUST follow these enterprise standards:');
@@ -265,27 +310,27 @@ class AgentSpawner {
       }
     }
 
-    // 3. Context injection
+    // 4. Context injection
     sections.push('\n# Available Context');
     sections.push('You have access to the following context from previous agents:');
     sections.push('```json');
     sections.push(JSON.stringify(contextData, null, 2));
     sections.push('```');
 
-    // 4. Task-specific instructions
+    // 5. Task-specific instructions
     if (task) {
       sections.push(`\n# Task: ${task}`);
       sections.push(`Execute the task: ${task}`);
     }
 
-    // 5. Template reference
+    // 6. Template reference
     if (template) {
       sections.push(`\n# Output Template`);
       sections.push(`Use template: ${template}`);
       sections.push(`Template path: .claude/templates/${template}.md`);
     }
 
-    // 6. Schema requirements
+    // 7. Schema requirements
     if (stepConfig.validators) {
       sections.push('\n# Validation Requirements');
       for (const validator of stepConfig.validators) {
@@ -295,7 +340,7 @@ class AgentSpawner {
       }
     }
 
-    // 7. Output format
+    // 8. Output format
     sections.push('\n# Output Format');
     sections.push('Return ONLY valid JSON conforming to the specified schema.');
     sections.push('Do NOT include explanatory text outside the JSON.');

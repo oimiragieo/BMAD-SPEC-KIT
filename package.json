@@ -28,7 +28,8 @@
   "dependencies": {
     "js-yaml": "^4.1.0",
     "ajv": "^8.12.0",
-    "ajv-formats": "^2.1.1"
+    "ajv-formats": "^2.1.1",
+    "zod": "^3.22.4"
   },
   "devDependencies": {},
   "keywords": [
