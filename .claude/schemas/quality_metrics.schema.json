@@ -1,0 +1,434 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec-kit.dev/schemas/quality_metrics.schema.json",
+  "title": "Quality Metrics Schema",
+  "description": "Aggregated quality metrics for workflow execution and agent outputs",
+  "type": "object",
+  "required": ["session_id", "workflow_name", "timestamp", "overall_quality_score"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier",
+      "pattern": "^bmad-session-[0-9]{13}-[a-z0-9]{8}$"
+    },
+    "workflow_name": {
+      "type": "string",
+      "description": "Name of the workflow"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when metrics were captured"
+    },
+    "overall_quality_score": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 10,
+      "description": "Weighted average quality score across all agents and artifacts"
+    },
+    "quality_grade": {
+      "type": "string",
+      "enum": ["excellent", "good", "acceptable", "needs_improvement", "poor"],
+      "description": "Qualitative assessment of overall quality"
+    },
+    "agent_scores": {
+      "type": "object",
+      "description": "Quality scores for each agent's outputs",
+      "patternProperties": {
+        "^(analyst|pm|architect|developer|qa|ux-expert)$": {
+          "type": "object",
+          "required": ["overall"],
+          "properties": {
+            "completeness": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "How complete is the output (all required sections present)"
+            },
+            "clarity": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "How clear and understandable is the output"
+            },
+            "technical_quality": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "Technical correctness and feasibility"
+            },
+            "consistency": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "Consistency with other agents' outputs"
+            },
+            "adherence_to_standards": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "Following enterprise rules and standards"
+            },
+            "overall": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "description": "Weighted overall score for this agent"
+            },
+            "weight": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Weight of this agent's score in overall calculation"
+            },
+            "artifacts": {
+              "type": "array",
+              "description": "Individual artifact scores",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "artifact_name": { "type": "string" },
+                  "artifact_type": { "type": "string" },
+                  "quality_score": { "type": "number", "minimum": 0, "maximum": 10 },
+                  "issues": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "type": { "type": "string" },
+                        "severity": { "type": "string", "enum": ["low", "medium", "high", "critical"] },
+                        "message": { "type": "string" },
+                        "resolved": { "type": "boolean" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "validation_results": {
+      "type": "object",
+      "description": "Aggregated validation results",
+      "required": ["total_validations", "passed", "failed"],
+      "properties": {
+        "total_validations": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total number of validation checks performed"
+        },
+        "passed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of validations that passed"
+        },
+        "failed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of validations that failed"
+        },
+        "auto_fixed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of issues automatically fixed"
+        },
+        "manual_intervention_required": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of issues requiring manual intervention"
+        },
+        "pass_rate": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Percentage of validations passed (passed / total)"
+        },
+        "validation_by_type": {
+          "type": "object",
+          "properties": {
+            "schema_validation": {
+              "type": "object",
+              "properties": {
+                "total": { "type": "integer" },
+                "passed": { "type": "integer" },
+                "failed": { "type": "integer" }
+              }
+            },
+            "checklist_validation": {
+              "type": "object",
+              "properties": {
+                "total": { "type": "integer" },
+                "passed": { "type": "integer" },
+                "failed": { "type": "integer" }
+              }
+            },
+            "cross_agent_validation": {
+              "type": "object",
+              "properties": {
+                "total": { "type": "integer" },
+                "passed": { "type": "integer" },
+                "failed": { "type": "integer" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "quality_gates": {
+      "type": "object",
+      "description": "Quality gate results",
+      "properties": {
+        "gates_evaluated": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gates_passed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gates_failed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "gate_details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gate_name": { "type": "string" },
+              "step_id": { "type": "integer" },
+              "agent": { "type": "string" },
+              "threshold": { "type": "number" },
+              "actual_score": { "type": "number" },
+              "passed": { "type": "boolean" },
+              "action_taken": {
+                "type": "string",
+                "enum": ["continue", "retry", "escalate", "fail"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "technical_metrics": {
+      "type": "object",
+      "description": "Technical quality metrics",
+      "properties": {
+        "code_quality": {
+          "type": "object",
+          "properties": {
+            "linting_score": { "type": "number", "minimum": 0, "maximum": 10 },
+            "complexity_score": { "type": "number", "minimum": 0, "maximum": 10 },
+            "maintainability_score": { "type": "number", "minimum": 0, "maximum": 10 },
+            "security_score": { "type": "number", "minimum": 0, "maximum": 10 }
+          }
+        },
+        "test_coverage": {
+          "type": "object",
+          "properties": {
+            "unit_test_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Percentage of code covered by unit tests"
+            },
+            "integration_test_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "e2e_test_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "overall_coverage": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "meets_threshold": {
+              "type": "boolean",
+              "description": "Whether coverage meets minimum threshold (typically 80%)"
+            }
+          }
+        },
+        "accessibility": {
+          "type": "object",
+          "properties": {
+            "wcag_level": {
+              "type": "string",
+              "enum": ["A", "AA", "AAA", "not_evaluated"],
+              "description": "WCAG compliance level achieved"
+            },
+            "violations": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of accessibility violations"
+            },
+            "score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            }
+          }
+        },
+        "performance": {
+          "type": "object",
+          "properties": {
+            "lighthouse_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 100,
+              "description": "Lighthouse performance score (if applicable)"
+            },
+            "load_time_ms": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Estimated page load time"
+            },
+            "bundle_size_kb": {
+              "type": "number",
+              "minimum": 0,
+              "description": "Frontend bundle size"
+            }
+          }
+        },
+        "security": {
+          "type": "object",
+          "properties": {
+            "vulnerabilities_found": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "vulnerabilities_by_severity": {
+              "type": "object",
+              "properties": {
+                "critical": { "type": "integer", "minimum": 0 },
+                "high": { "type": "integer", "minimum": 0 },
+                "medium": { "type": "integer", "minimum": 0 },
+                "low": { "type": "integer", "minimum": 0 }
+              }
+            },
+            "security_score": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10
+            }
+          }
+        }
+      }
+    },
+    "consistency_checks": {
+      "type": "object",
+      "description": "Cross-agent consistency validation results",
+      "properties": {
+        "checks_performed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inconsistencies_found": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "inconsistency_details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "technical_constraint_mismatch",
+                  "requirement_architecture_mismatch",
+                  "ux_implementation_mismatch",
+                  "test_requirement_gap"
+                ]
+              },
+              "agents_involved": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "description": { "type": "string" },
+              "severity": {
+                "type": "string",
+                "enum": ["low", "medium", "high", "critical"]
+              },
+              "resolved": { "type": "boolean" },
+              "resolution_notes": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "improvement_recommendations": {
+      "type": "array",
+      "description": "Recommendations for improving quality scores",
+      "items": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "completeness",
+              "clarity",
+              "technical_quality",
+              "consistency",
+              "standards_adherence",
+              "testing",
+              "accessibility",
+              "security",
+              "performance"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "agent": { "type": "string" },
+          "recommendation": { "type": "string" },
+          "impact": {
+            "type": "string",
+            "description": "Expected impact on overall quality score"
+          }
+        }
+      }
+    },
+    "trend_analysis": {
+      "type": "object",
+      "description": "Quality trends over time (if multiple sessions)",
+      "properties": {
+        "sessions_analyzed": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "average_quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "trend": {
+          "type": "string",
+          "enum": ["improving", "stable", "declining", "insufficient_data"]
+        },
+        "quality_score_change": {
+          "type": "number",
+          "description": "Change in quality score from previous session"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "evaluation_method": {
+          "type": "string",
+          "enum": ["automated", "manual", "hybrid"]
+        },
+        "evaluator_version": { "type": "string" },
+        "evaluation_duration_ms": { "type": "integer" }
+      }
+    }
+  }
+}

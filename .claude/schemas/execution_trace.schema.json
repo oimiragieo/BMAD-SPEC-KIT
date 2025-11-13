@@ -1,0 +1,300 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec-kit.dev/schemas/execution_trace.schema.json",
+  "title": "Execution Trace Schema",
+  "description": "Complete audit log of workflow execution including all agent activities, timings, and outcomes",
+  "type": "object",
+  "required": ["session_id", "workflow_name", "started_at", "execution_log"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier",
+      "pattern": "^bmad-session-[0-9]{13}-[a-z0-9]{8}$"
+    },
+    "workflow_name": {
+      "type": "string",
+      "description": "Name of the workflow being executed",
+      "enum": [
+        "greenfield-fullstack",
+        "greenfield-fullstack-v2",
+        "greenfield-ui",
+        "greenfield-service",
+        "brownfield-fullstack",
+        "brownfield-ui",
+        "brownfield-service"
+      ]
+    },
+    "workflow_version": {
+      "type": "string",
+      "description": "Version of the workflow",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when workflow execution started"
+    },
+    "completed_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when workflow execution completed"
+    },
+    "total_duration_ms": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Total workflow execution time in milliseconds"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["in_progress", "completed", "failed", "paused", "cancelled"],
+      "description": "Overall workflow execution status"
+    },
+    "execution_mode": {
+      "type": "string",
+      "enum": ["sequential", "parallel_optimized", "adaptive"],
+      "description": "Execution mode used for this workflow"
+    },
+    "execution_log": {
+      "type": "array",
+      "description": "Chronological log of all execution events",
+      "items": {
+        "type": "object",
+        "required": ["timestamp", "step_id", "agent", "action", "status"],
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp of the event"
+          },
+          "step_id": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Workflow step identifier"
+          },
+          "group_id": {
+            "type": "string",
+            "description": "Parallel execution group identifier"
+          },
+          "agent": {
+            "type": "string",
+            "description": "Agent name executing the step",
+            "enum": ["analyst", "pm", "architect", "developer", "qa", "ux-expert", "orchestrator"]
+          },
+          "action": {
+            "type": "string",
+            "description": "Action being performed",
+            "enum": [
+              "started",
+              "loading_context",
+              "executing",
+              "validating",
+              "rendering",
+              "updating_context",
+              "completed",
+              "failed",
+              "retrying",
+              "escalating",
+              "waiting_for_dependencies"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["started", "in_progress", "completed", "failed", "retrying", "skipped"],
+            "description": "Current status of the action"
+          },
+          "duration_ms": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Duration of the action in milliseconds (for completed actions)"
+          },
+          "quality_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 10,
+            "description": "Quality score of the output (if applicable)"
+          },
+          "artifacts_created": {
+            "type": "array",
+            "description": "List of artifacts created during this action",
+            "items": {
+              "type": "string"
+            }
+          },
+          "validation_results": {
+            "type": "object",
+            "description": "Results of validation steps",
+            "properties": {
+              "schema_validation": {
+                "type": "object",
+                "properties": {
+                  "passed": { "type": "boolean" },
+                  "errors": { "type": "array", "items": { "type": "string" } },
+                  "auto_fixed": { "type": "boolean" }
+                }
+              },
+              "checklist_validation": {
+                "type": "object",
+                "properties": {
+                  "passed": { "type": "boolean" },
+                  "score": { "type": "number" },
+                  "items_checked": { "type": "integer" },
+                  "items_passed": { "type": "integer" }
+                }
+              }
+            }
+          },
+          "errors": {
+            "type": "array",
+            "description": "List of errors encountered",
+            "items": {
+              "type": "object",
+              "properties": {
+                "code": { "type": "string" },
+                "message": { "type": "string" },
+                "severity": {
+                  "type": "string",
+                  "enum": ["warning", "error", "critical"]
+                },
+                "recoverable": { "type": "boolean" }
+              }
+            }
+          },
+          "retry_count": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "Number of retry attempts for this action"
+          },
+          "escalated_to": {
+            "type": "string",
+            "description": "Agent name if the step was escalated"
+          },
+          "parallel_execution": {
+            "type": "object",
+            "description": "Information about parallel execution",
+            "properties": {
+              "group_id": { "type": "string" },
+              "concurrent_agents": { "type": "array", "items": { "type": "string" } },
+              "wait_time_ms": { "type": "integer" },
+              "synchronization_status": {
+                "type": "string",
+                "enum": ["waiting", "synchronized", "partial", "timeout"]
+              }
+            }
+          },
+          "context_snapshot_id": {
+            "type": "string",
+            "description": "Identifier for context snapshot at this point"
+          },
+          "resource_usage": {
+            "type": "object",
+            "description": "Resource utilization metrics",
+            "properties": {
+              "cpu_units": { "type": "number" },
+              "memory_mb": { "type": "number" },
+              "tokens_used": { "type": "integer" }
+            }
+          },
+          "feedback_loop": {
+            "type": "object",
+            "description": "Feedback loop information if triggered",
+            "properties": {
+              "triggered": { "type": "boolean" },
+              "reason": { "type": "string" },
+              "notified_agents": { "type": "array", "items": { "type": "string" } },
+              "resolution_status": {
+                "type": "string",
+                "enum": ["pending", "resolved", "escalated", "ignored"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "parallel_execution_summary": {
+      "type": "object",
+      "description": "Summary of parallel execution performance",
+      "properties": {
+        "groups_executed": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "parallel_groups": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "time_saved_ms": {
+          "type": "integer",
+          "description": "Estimated time saved through parallelization"
+        },
+        "efficiency_ratio": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "description": "Ratio of actual to theoretical maximum parallel efficiency"
+        }
+      }
+    },
+    "quality_summary": {
+      "type": "object",
+      "description": "Overall quality metrics for the execution",
+      "properties": {
+        "overall_quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10
+        },
+        "validations_passed": { "type": "integer" },
+        "validations_failed": { "type": "integer" },
+        "auto_fixes_applied": { "type": "integer" },
+        "escalations": { "type": "integer" }
+      }
+    },
+    "performance_metrics": {
+      "type": "object",
+      "description": "Performance benchmarks",
+      "properties": {
+        "total_agent_time_ms": {
+          "type": "integer",
+          "description": "Sum of all agent execution times"
+        },
+        "total_wait_time_ms": {
+          "type": "integer",
+          "description": "Total time spent waiting for dependencies"
+        },
+        "total_validation_time_ms": {
+          "type": "integer"
+        },
+        "total_render_time_ms": {
+          "type": "integer"
+        },
+        "context_operations_time_ms": {
+          "type": "integer"
+        },
+        "bottlenecks": {
+          "type": "array",
+          "description": "Identified performance bottlenecks",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step_id": { "type": "integer" },
+              "agent": { "type": "string" },
+              "duration_ms": { "type": "integer" },
+              "reason": { "type": "string" }
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional execution metadata",
+      "properties": {
+        "environment": { "type": "string" },
+        "claude_version": { "type": "string" },
+        "bmad_version": { "type": "string" },
+        "user_id": { "type": "string" },
+        "project_id": { "type": "string" }
+      }
+    }
+  }
+}

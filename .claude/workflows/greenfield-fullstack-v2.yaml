@@ -1,0 +1,358 @@
+# Greenfield Fullstack Workflow V2 - Optimized with Parallel Execution
+# Implements modern Claude Code Task tool patterns and parallel agent execution
+
+workflow:
+  name: greenfield-fullstack-v2
+  version: "2.0.0"
+  description: "Create a new full-stack application with parallel execution optimization"
+  type: greenfield
+  category: fullstack
+  execution_engine: parallel_optimized
+
+metadata:
+  author: "BMAD System - Optimized"
+  last_updated: "2025-11-13"
+  optimization_level: "high"
+  expected_performance_gain: "40-60%"
+
+requirements:
+  - User specification document
+  - Technical preferences (optional)
+  - UI/UX requirements (optional)
+
+# Parallel Execution Groups
+# Groups with parallel: true will spawn agents concurrently using Task tool
+parallel_groups:
+
+  # Group 1: Foundation (Sequential)
+  - group_id: foundation
+    group_name: "Project Foundation"
+    parallel: false
+    agents:
+      - step: 1
+        agent: analyst
+        task: analyze_specification
+        template: project_brief
+        inputs:
+          - "user_spec.md"
+        creates: ".claude/context/artifacts/project-brief.json"
+        validators:
+          - schema: ".claude/schemas/project_brief.schema.json"
+          - checklist: ".claude/checklists/story-draft-checklist.md"
+        render:
+          renderer: "project-brief"
+          from: ".claude/context/artifacts/project-brief.json"
+          to: ".claude/context/artifacts/project-brief.md"
+        description: "Analyze user requirements and create project brief"
+        execution:
+          method: "task_tool"
+          subagent_type: "general-purpose"
+          timeout: "5m"
+          retry_on_failure: 1
+          escalate_to: "pm"
+
+      - step: 2
+        agent: pm
+        task: create_prd
+        template: prd
+        depends_on: [1]
+        inputs:
+          - ".claude/context/artifacts/project-brief.json"
+        creates: ".claude/context/artifacts/prd.json"
+        validators:
+          - schema: ".claude/schemas/product_requirements.schema.json"
+          - checklist: ".claude/checklists/story-draft-checklist.md"
+        render:
+          renderer: "prd"
+          from: ".claude/context/artifacts/prd.json"
+          to: ".claude/context/artifacts/prd.md"
+        description: "Create Product Requirements Document"
+        execution:
+          method: "task_tool"
+          subagent_type: "general-purpose"
+          timeout: "6m"
+          retry_on_failure: 1
+          escalate_to: "analyst"
+
+  # Group 2: Design & Architecture (PARALLEL - KEY OPTIMIZATION)
+  - group_id: design_and_architecture
+    group_name: "Parallel Design & Architecture"
+    parallel: true  # Execute ux-expert and architect concurrently
+    synchronization:
+      type: "smart_barrier"
+      timeout: "10m"
+      partial_completion: "allow_with_one_success"
+      cross_validation: true
+    depends_on_groups: ["foundation"]
+
+    agents:
+      - step: 3
+        agent: ux-expert
+        task: design_interface
+        template: ui_spec
+        depends_on: [2]
+        inputs:
+          - ".claude/context/artifacts/prd.json"
+        creates: ".claude/context/artifacts/ux-spec.json"
+        validators:
+          - schema: ".claude/schemas/ux_spec.schema.json"
+        render:
+          renderer: "ux-spec"
+          from: ".claude/context/artifacts/ux-spec.json"
+          to: ".claude/context/artifacts/ui-spec.md"
+        description: "Design user interface and experience (runs in parallel with architect)"
+        execution:
+          method: "task_tool"
+          subagent_type: "general-purpose"
+          timeout: "8m"
+          retry_on_failure: 1
+          escalate_to: "architect"
+          resource_requirements:
+            cpu: "medium"
+            memory: "medium"
+            priority: 7
+
+      - step: 4
+        agent: architect
+        task: design_architecture
+        template: fullstack_architecture
+        depends_on: [2]
+        inputs:
+          - ".claude/context/artifacts/prd.json"
+          - ".claude/context/artifacts/ux-spec.json"  # Optional, may not be ready
+        creates: ".claude/context/artifacts/system-architecture.json"
+        validators:
+          - schema: ".claude/schemas/system_architecture.schema.json"
+        render:
+          renderer: "architecture"
+          from: ".claude/context/artifacts/system-architecture.json"
+          to: ".claude/context/artifacts/fullstack-architecture.md"
+        description: "Design comprehensive full-stack architecture (runs in parallel with ux-expert)"
+        execution:
+          method: "task_tool"
+          subagent_type: "general-purpose"
+          timeout: "10m"
+          retry_on_failure: 1
+          escalate_to: "pm"
+          resource_requirements:
+            cpu: "high"
+            memory: "high"
+            priority: 8
+
+  # Group 3: Optional UI Generation Prompt (Sequential)
+  - group_id: ui_generation
+    group_name: "UI Generation Prompt"
+    parallel: false
+    optional: true
+    depends_on_groups: ["design_and_architecture"]
+
+    agents:
+      - step: 5
+        agent: ux-expert
+        task: generate_ai_prompt
+        depends_on: [3]
+        inputs:
+          - ".claude/context/artifacts/ui-spec.md"
+        creates: ".claude/context/artifacts/v0-prompt.md"
+        description: "Generate AI prompt for UI generation tools"
+        execution:
+          method: "task_tool"
+          subagent_type: "general-purpose"
+          timeout: "3m"
+          skip_on_failure: true
+
+  # Group 4: Implementation (Sequential with potential future parallelization)
+  - group_id: implementation
+    group_name: "Code Implementation"
+    parallel: false  # Could be parallelized in future: frontend + backend
+    depends_on_groups: ["design_and_architecture"]
+
+    agents:
+      - step: 6
+        agent: developer
+        task: implement_fullstack
+        depends_on: [3, 4]
+        inputs:
+          - ".claude/context/artifacts/ui-spec.md"
+          - ".claude/context/artifacts/fullstack-architecture.md"
+          - ".claude/context/artifacts/prd.json"
+        creates:
+          - "src/frontend/"
+          - "src/backend/"
+        description: "Implement full-stack application (frontend + backend)"
+        execution:
+          method: "task_tool"
+          subagent_type: "general-purpose"
+          timeout: "15m"
+          retry_on_failure: 1
+          checkpoint_on_completion: true
+          feedback_loop:
+            enabled: true
+            notify_on_constraint: ["architect", "pm"]
+
+  # Group 5: Quality Assurance (Sequential)
+  - group_id: quality_assurance
+    group_name: "Testing & QA"
+    parallel: false
+    depends_on_groups: ["implementation"]
+
+    agents:
+      - step: 7
+        agent: qa
+        task: create_test_plan
+        template: test_plan
+        depends_on: [6]
+        inputs:
+          - ".claude/context/artifacts/ui-spec.md"
+          - ".claude/context/artifacts/fullstack-architecture.md"
+          - "src/frontend/"
+          - "src/backend/"
+        creates: ".claude/context/artifacts/test-plan.json"
+        validators:
+          - schema: ".claude/schemas/test_plan.schema.json"
+        render:
+          renderer: "test-plan"
+          from: ".claude/context/artifacts/test-plan.json"
+          to: ".claude/context/artifacts/test-plan.md"
+        description: "Create comprehensive testing strategy and validate implementation"
+        execution:
+          method: "task_tool"
+          subagent_type: "general-purpose"
+          timeout: "6m"
+          retry_on_failure: 1
+          escalate_to: "architect"
+          feedback_loop:
+            enabled: true
+            on_failure_notify: ["pm", "developer"]
+
+  # Group 6: Final Review (Sequential)
+  - group_id: final_review
+    group_name: "Implementation Review"
+    parallel: false
+    depends_on_groups: ["quality_assurance"]
+
+    agents:
+      - step: 8
+        agent: architect
+        task: review_implementation
+        depends_on: [6, 7]
+        inputs:
+          - "src/frontend/"
+          - "src/backend/"
+          - ".claude/context/artifacts/test-plan.md"
+          - ".claude/context/artifacts/fullstack-architecture.md"
+        creates: ".claude/context/artifacts/review-notes.json"
+        validators:
+          - schema: ".claude/schemas/review_notes.schema.json"
+        render:
+          renderer: "review-notes"
+          from: ".claude/context/artifacts/review-notes.json"
+          to: ".claude/context/artifacts/review-notes.md"
+        description: "Review and validate full-stack implementation"
+        execution:
+          method: "task_tool"
+          subagent_type: "general-purpose"
+          timeout: "5m"
+          final_step: true
+
+# Expected outputs (unchanged from v1)
+outputs:
+  documents:
+    - project-brief.json
+    - project-brief.md
+    - prd.json
+    - prd.md
+    - ux-spec.json
+    - ui-spec.md
+    - system-architecture.json
+    - fullstack-architecture.md
+    - test-plan.json
+    - test-plan.md
+    - review-notes.json
+    - review-notes.md
+    - v0-prompt.md (optional)
+
+  frontend_code:
+    - src/frontend/components/
+    - src/frontend/pages/
+    - src/frontend/styles/
+    - src/frontend/hooks/
+    - src/frontend/utils/
+    - src/frontend/types/
+
+  backend_code:
+    - src/backend/api/
+    - src/backend/models/
+    - src/backend/services/
+    - src/backend/middleware/
+    - src/backend/utils/
+    - src/backend/config/
+
+  configuration:
+    - package.json
+    - docker-compose.yml
+    - Dockerfile.frontend
+    - Dockerfile.backend
+    - .env.example
+    - .gitignore
+
+  testing:
+    - tests/frontend/
+    - tests/backend/
+    - tests/integration/
+    - tests/e2e/
+
+# Execution Strategy
+execution_strategy:
+  parallel_execution:
+    enabled: true
+    max_concurrent_agents: 2
+    resource_allocation: "dynamic"
+
+  error_recovery:
+    retry_strategy: "exponential_backoff"
+    max_retries: 2
+    fallback: "sequential_execution"
+
+  context_management:
+    method: "context_bus"
+    propagation: "automatic"
+    validation: "real_time"
+
+  quality_gates:
+    enforcement: "strict"
+    auto_fix: true
+    escalation_on_failure: true
+
+# Performance Metrics
+performance:
+  estimated_duration:
+    sequential: "35-45 minutes"
+    parallel_optimized: "22-28 minutes"
+    improvement: "40-60%"
+
+  critical_path:
+    - analyst (step 1)
+    - pm (step 2)
+    - max(ux-expert (step 3), architect (step 4))  # Parallel
+    - developer (step 6)
+    - qa (step 7)
+    - architect review (step 8)
+
+# Migration Notes
+migration_from_v1:
+  breaking_changes: false
+  backward_compatible: true
+  opt_in: true  # Use v2 explicitly, v1 remains default until tested
+
+when_to_use_v2:
+  - Performance is critical
+  - Multiple agents can work independently
+  - Modern Claude Code environment with Task tool support
+  - Need better error recovery and context management
+
+when_to_use_v1:
+  - Simpler execution model preferred
+  - Sequential execution required
+  - Testing or debugging workflows
+  - Legacy compatibility needed

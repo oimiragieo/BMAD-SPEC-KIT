@@ -1,0 +1,541 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://bmad-spec-kit.dev/schemas/context_state.schema.json",
+  "title": "Context State Schema",
+  "description": "Complete context structure for workflow execution state management",
+  "type": "object",
+  "required": ["session_id", "project_metadata", "workflow_state", "agent_contexts", "global_context"],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier",
+      "pattern": "^bmad-session-[0-9]{13}-[a-z0-9]{8}$"
+    },
+    "schema_version": {
+      "type": "string",
+      "description": "Schema version for backward compatibility",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "default": "2.0.0"
+    },
+    "project_metadata": {
+      "type": "object",
+      "required": ["name", "workflow_type", "created_at"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Project name"
+        },
+        "workflow_type": {
+          "type": "string",
+          "enum": [
+            "greenfield-fullstack",
+            "greenfield-fullstack-v2",
+            "greenfield-ui",
+            "greenfield-service",
+            "brownfield-fullstack",
+            "brownfield-ui",
+            "brownfield-service"
+          ],
+          "description": "Selected workflow type"
+        },
+        "workflow_version": {
+          "type": "string",
+          "description": "Version of workflow being used"
+        },
+        "complexity_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Calculated project complexity score"
+        },
+        "project_type": {
+          "type": "string",
+          "enum": ["web-app", "saas", "enterprise-app", "prototype", "mvp", "service", "ui-only"],
+          "description": "Type of project being built"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when session was created"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp when context was last updated"
+        },
+        "estimated_duration": {
+          "type": "string",
+          "description": "Estimated workflow completion time"
+        }
+      }
+    },
+    "workflow_state": {
+      "type": "object",
+      "required": ["current_step", "completed_steps"],
+      "properties": {
+        "current_step": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Currently executing step number (0 = not started)"
+        },
+        "current_group": {
+          "type": "string",
+          "description": "Currently executing parallel group ID"
+        },
+        "completed_steps": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "description": "List of completed step numbers"
+        },
+        "failed_steps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "step_id": { "type": "integer" },
+              "agent": { "type": "string" },
+              "error": { "type": "string" },
+              "retry_count": { "type": "integer" }
+            }
+          },
+          "description": "List of failed steps with error details"
+        },
+        "skipped_steps": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "description": "List of skipped step numbers (optional steps)"
+        },
+        "quality_gates_passed": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of quality gates that have passed"
+        },
+        "quality_gates_failed": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "gate_name": { "type": "string" },
+              "step_id": { "type": "integer" },
+              "reason": { "type": "string" }
+            }
+          },
+          "description": "List of quality gates that have failed"
+        },
+        "overall_quality_score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 10,
+          "description": "Aggregate quality score across all completed steps"
+        },
+        "execution_mode": {
+          "type": "string",
+          "enum": ["sequential", "parallel_optimized", "adaptive"],
+          "description": "Current execution mode"
+        },
+        "paused": {
+          "type": "boolean",
+          "description": "Whether workflow is currently paused"
+        },
+        "pause_reason": {
+          "type": "string",
+          "description": "Reason for pause (if paused)"
+        }
+      }
+    },
+    "agent_contexts": {
+      "type": "object",
+      "description": "Context for each agent including inputs, outputs, and state",
+      "patternProperties": {
+        "^(analyst|pm|architect|developer|qa|ux-expert|orchestrator)$": {
+          "type": "object",
+          "required": ["status"],
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["pending", "in_progress", "completed", "failed", "skipped"],
+              "description": "Current agent execution status"
+            },
+            "execution_start": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when agent started execution"
+            },
+            "execution_end": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Timestamp when agent completed execution"
+            },
+            "duration_ms": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Total execution time in milliseconds"
+            },
+            "inputs": {
+              "type": "object",
+              "description": "Input data required by this agent",
+              "properties": {
+                "required": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "List of required input paths"
+                },
+                "optional": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "List of optional input paths"
+                },
+                "received": {
+                  "type": "object",
+                  "description": "Actual input data received",
+                  "additionalProperties": true
+                }
+              }
+            },
+            "outputs": {
+              "type": "object",
+              "description": "Output artifacts produced by this agent",
+              "additionalProperties": {
+                "type": "object",
+                "properties": {
+                  "file_reference": {
+                    "type": "string",
+                    "description": "Path to the output artifact file"
+                  },
+                  "structured_data": {
+                    "type": "object",
+                    "description": "Structured data extracted from the artifact",
+                    "additionalProperties": true
+                  },
+                  "quality_metrics": {
+                    "type": "object",
+                    "properties": {
+                      "completeness_score": { "type": "number", "minimum": 0, "maximum": 10 },
+                      "clarity_score": { "type": "number", "minimum": 0, "maximum": 10 },
+                      "feasibility_score": { "type": "number", "minimum": 0, "maximum": 10 },
+                      "overall_score": { "type": "number", "minimum": 0, "maximum": 10 }
+                    }
+                  },
+                  "schema_used": {
+                    "type": "string",
+                    "description": "Path to JSON schema used for validation"
+                  },
+                  "validation_passed": {
+                    "type": "boolean",
+                    "description": "Whether output passed schema validation"
+                  }
+                }
+              }
+            },
+            "validation_results": {
+              "type": "array",
+              "description": "Results of all validations performed",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "type": {
+                    "type": "string",
+                    "enum": ["schema", "checklist", "cross_agent", "quality_gate"]
+                  },
+                  "passed": { "type": "boolean" },
+                  "score": { "type": "number" },
+                  "errors": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                  },
+                  "auto_fixed": { "type": "boolean" }
+                }
+              }
+            },
+            "retries": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of retry attempts"
+            },
+            "escalated_to": {
+              "type": "string",
+              "description": "Agent name if escalated"
+            },
+            "feedback_received": {
+              "type": "array",
+              "description": "Feedback from other agents",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "from_agent": { "type": "string" },
+                  "type": {
+                    "type": "string",
+                    "enum": ["constraint", "inconsistency", "suggestion", "validation_failure"]
+                  },
+                  "message": { "type": "string" },
+                  "severity": {
+                    "type": "string",
+                    "enum": ["info", "warning", "error", "critical"]
+                  },
+                  "resolved": { "type": "boolean" }
+                }
+              }
+            },
+            "context_snapshot_id": {
+              "type": "string",
+              "description": "ID of context snapshot before agent execution"
+            }
+          }
+        }
+      }
+    },
+    "global_context": {
+      "type": "object",
+      "description": "Global project context available to all agents",
+      "properties": {
+        "project_constraints": {
+          "type": "object",
+          "properties": {
+            "budget_level": {
+              "type": "string",
+              "enum": ["startup", "enterprise", "unlimited"],
+              "description": "Budget constraints for the project"
+            },
+            "timeline": {
+              "type": "string",
+              "enum": ["rush", "normal", "extended"],
+              "description": "Timeline expectations"
+            },
+            "team_size": {
+              "type": "integer",
+              "minimum": 0,
+              "description": "Number of team members"
+            },
+            "complexity_tolerance": {
+              "type": "string",
+              "enum": ["simple", "moderate", "complex"],
+              "description": "Acceptable complexity level"
+            }
+          }
+        },
+        "technical_preferences": {
+          "type": "object",
+          "properties": {
+            "frontend_framework": {
+              "type": "string",
+              "description": "Preferred frontend framework (e.g., React, Vue, Angular)"
+            },
+            "backend_technology": {
+              "type": "string",
+              "description": "Preferred backend technology (e.g., Node.js, Python, Go)"
+            },
+            "database_preference": {
+              "type": "string",
+              "description": "Preferred database (e.g., PostgreSQL, MongoDB, MySQL)"
+            },
+            "deployment_target": {
+              "type": "string",
+              "description": "Deployment platform (e.g., Vercel, AWS, Docker)"
+            },
+            "performance_requirements": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "quality_standards": {
+          "type": "object",
+          "properties": {
+            "minimum_test_coverage": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100,
+              "default": 80,
+              "description": "Minimum required test coverage percentage"
+            },
+            "code_quality_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 10,
+              "default": 8.0,
+              "description": "Minimum acceptable code quality score"
+            },
+            "accessibility_level": {
+              "type": "string",
+              "enum": ["WCAG-A", "WCAG-AA", "WCAG-AAA"],
+              "default": "WCAG-AA",
+              "description": "Required accessibility compliance level"
+            },
+            "security_requirements": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Specific security requirements"
+            }
+          }
+        },
+        "business_context": {
+          "type": "object",
+          "properties": {
+            "industry_sector": {
+              "type": "string",
+              "description": "Industry sector (e.g., fintech, healthcare, e-commerce)"
+            },
+            "target_market": {
+              "type": "string",
+              "description": "Primary target market"
+            },
+            "competitive_landscape": {
+              "type": "string",
+              "description": "Description of competitive landscape"
+            },
+            "regulatory_requirements": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Regulatory requirements (e.g., GDPR, HIPAA, SOC2)"
+            }
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "object",
+      "description": "Registry of all generated artifacts",
+      "properties": {
+        "generated": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of generated artifact file paths"
+        },
+        "schemas_used": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of schemas used for validation"
+        },
+        "context_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of context-related files"
+        }
+      }
+    },
+    "validation_history": {
+      "type": "array",
+      "description": "Complete history of all validation operations",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "step_id": { "type": "integer" },
+          "agent": { "type": "string" },
+          "validation_type": { "type": "string" },
+          "passed": { "type": "boolean" },
+          "details": { "type": "object", "additionalProperties": true }
+        }
+      }
+    },
+    "decision_log": {
+      "type": "array",
+      "description": "Log of all significant decisions made during execution",
+      "items": {
+        "type": "object",
+        "properties": {
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decision_type": {
+            "type": "string",
+            "enum": [
+              "workflow_selection",
+              "agent_escalation",
+              "quality_gate_override",
+              "parallel_execution",
+              "retry_decision",
+              "workflow_pause",
+              "adaptive_routing"
+            ]
+          },
+          "decision_maker": {
+            "type": "string",
+            "description": "Which agent or system component made the decision"
+          },
+          "decision": { "type": "string" },
+          "reasoning": { "type": "string" },
+          "alternatives_considered": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        }
+      }
+    },
+    "feedback_loops": {
+      "type": "array",
+      "description": "Active and resolved feedback loops",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "triggered_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "source_agent": { "type": "string" },
+          "target_agents": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "issue_type": {
+            "type": "string",
+            "enum": [
+              "constraint_violation",
+              "inconsistency",
+              "missing_requirement",
+              "technical_infeasibility"
+            ]
+          },
+          "description": { "type": "string" },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "acknowledged", "resolved", "escalated", "ignored"]
+          },
+          "resolution": { "type": "string" },
+          "resolved_at": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "checkpoints": {
+      "type": "array",
+      "description": "Context checkpoints for recovery",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "step_id": { "type": "integer" },
+          "description": { "type": "string" },
+          "checkpoint_file": { "type": "string" }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "environment": { "type": "string" },
+        "claude_version": { "type": "string" },
+        "bmad_version": { "type": "string" },
+        "user_id": { "type": "string" },
+        "project_id": { "type": "string" }
+      }
+    }
+  }
+}
