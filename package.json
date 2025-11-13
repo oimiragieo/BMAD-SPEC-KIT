@@ -1,12 +1,14 @@
 {
   "name": "bmad-spec-kit",
   "private": true,
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "description": "Enterprise-grade AI orchestration system for multi-agent software development",
   "type": "module",
   "engines": { "node": ">=18" },
   "scripts": {
     "preflight": "node .claude/tools/context/preflight.mjs",
     "validate": "node .claude/tools/ci/validate-all.mjs",
+    "validate:ci": "bash .claude/ci/validate-all.sh",
     "scaffold": "node .claude/tools/context/scaffold.mjs",
     "route:gate": "node .claude/tools/gates/gate.mjs --schema .claude/schemas/route_decision.schema.json --input .claude/context/artifacts/route-decision.json --gate .claude/context/history/gates/ci/00-orchestrator.json --autofix 1",
     "session:update": "node .claude/tools/context/update-session.mjs",
@@ -14,7 +16,31 @@
     "render:prd": "node .claude/tools/renderers/bmad-render.mjs prd",
     "render:architecture": "node .claude/tools/renderers/bmad-render.mjs architecture",
     "render:ux-spec": "node .claude/tools/renderers/bmad-render.mjs ux-spec",
-    "render:test-plan": "node .claude/tools/renderers/bmad-render.mjs test-plan"
-    ,"render:all": "node .claude/tools/context/render-all.mjs"
-  }
+    "render:test-plan": "node .claude/tools/renderers/bmad-render.mjs test-plan",
+    "render:all": "node .claude/tools/context/render-all.mjs",
+    "execute": "node .claude/tools/orchestrator/workflow-executor.mjs",
+    "test": "node .claude/tests/integration/workflow-execution.test.mjs",
+    "benchmark": "node .claude/tools/benchmarks/performance-benchmark.mjs",
+    "deploy": "bash .claude/deploy/deploy-enterprise.sh",
+    "deploy:staging": "bash .claude/deploy/deploy-enterprise.sh --env staging",
+    "deploy:production": "bash .claude/deploy/deploy-enterprise.sh --env production"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0",
+    "ajv": "^8.12.0",
+    "ajv-formats": "^2.1.1"
+  },
+  "devDependencies": {},
+  "keywords": [
+    "ai",
+    "orchestration",
+    "multi-agent",
+    "workflow",
+    "automation",
+    "enterprise",
+    "bmad",
+    "software-development"
+  ],
+  "author": "BMAD System",
+  "license": "MIT"
 }
