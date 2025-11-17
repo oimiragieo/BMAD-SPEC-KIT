@@ -37,6 +37,7 @@ The **BMad-CORE** powers the **BMad Method** (probably why you're here!), but yo
     - [BMad Method (BMM) - AI-Driven Agile Development](#bmad-method-bmm---ai-driven-agile-development)
       - [v6 Highlights](#v6-highlights)
   - [🚀 Quick Start](#-quick-start)
+    - [BMad Game Development (BMGD) - Game Creation](#bmad-game-development-bmgd---game-creation)
     - [BMad Builder (BMB) - Create Custom Solutions](#bmad-builder-bmb---create-custom-solutions)
     - [Creative Intelligence Suite (CIS) - Innovation \& Creativity](#creative-intelligence-suite-cis---innovation--creativity)
   - [Installation](#installation)
@@ -111,15 +112,17 @@ Automatically adjusts planning depth and documentation based on project needs:
 3. **Phase 3: Solutioning** (Track-dependent) - Architecture, (Coming soon: security, DevOps, test strategy)
 4. **Phase 4: Implementation** (Iterative) - Story-centric development with just-in-time context
 
-**🤖 12 Specialized Agents**
+**🤖 8 Software Development Agents**
 
-PM • Analyst • Architect • Scrum Master • Developer • Test Architect (TEA) • UX Designer • Technical Writer • Game Designer • Game Developer • Game Architect • BMad Master (Orchestrator)
+PM • Analyst • Architect • Scrum Master • Developer • Test Architect (TEA) • UX Designer • Technical Writer
+
+**Note:** Game development agents (Game Designer, Game Developer, Game Architect, Game Scrum Master) are available in the separate BMGD module.
 
 **📚 Documentation**
 
 - **[Complete Documentation Hub](./src/modules/bmm/docs/README.md)** - Start here for all BMM guides
 - **[Quick Start Guide](./src/modules/bmm/docs/quick-start.md)** - Get building in 15 minutes
-- **[Agents Guide](./src/modules/bmm/docs/agents-guide.md)** - Meet all 12 agents (45 min read)
+- **[Agents Guide](./src/modules/bmm/docs/agents-guide.md)** - Meet all 8 BMM agents (45 min read)
 - **[34 Workflow Guides](./src/modules/bmm/docs/README.md#-workflow-guides)** - Complete phase-by-phase reference
 - **[BMM Module Overview](./src/modules/bmm/README.md)** - Module structure and quick links
 
@@ -151,6 +154,33 @@ PM • Analyst • Architect • Scrum Master • Developer • Test Architect (
 **Not sure which path?** Run `*workflow-init` and let BMM analyze your project goal and recommend the right track.
 
 **[📚 Learn More: Scale Adaptive System](./src/modules/bmm/docs/scale-adaptive-system.md)** - How BMM adapts across three planning tracks
+
+---
+
+### BMad Game Development (BMGD) - Game Creation
+
+Specialized game development toolkit with dedicated agents and workflows for creating games from concept to production.
+
+**4 Game Development Agents:**
+
+- **Game Designer** - Creative vision and game design documentation
+- **Game Developer** - Implementation across Unity, Unreal, and custom engines
+- **Game Architect** - Technical systems and scalable architecture
+- **Game Scrum Master** - Sprint orchestration for game teams
+
+**Game Development Phases:**
+
+1. **Preproduction** - Concept development, brainstorming, game brief
+2. **Design** - Game Design Document (GDD) and narrative design
+3. **Technical** - Game architecture and technical specifications
+4. **Production** - Sprint-based implementation using BMM workflows
+
+**Perfect For:** Game developers building 2D/3D games, indie projects, prototypes, or complex game systems.
+
+**Documentation:**
+
+- **[BMGD Module Overview](./src/modules/bmgd/README.md)** - Complete game development reference
+- **[Game Development Workflows](./src/modules/bmgd/workflows/)** - Phase-by-phase game creation
 
 ---
 
@@ -211,8 +241,12 @@ npx bmad-method install
 
 The installer provides:
 
-1. **Module Selection** - Choose BMM, BMB, CIS (or all)
-2. **Configuration** - Your name, language preferences, game dev options
+1. **Module Selection** - Choose from available modules:
+   - **BMM** (BMad Method) - AI-driven software development
+   - **BMGD** (BMad Game Development) - Game development agents and workflows
+   - **BMB** (BMad Builder) - Create custom agents and workflows
+   - **CIS** (Creative Intelligence Suite) - Innovation and creativity
+2. **Configuration** - Your name, language preferences
 3. **IDE Integration** - Automatic setup for your IDE
 
 **Installation creates:**
@@ -221,8 +255,9 @@ The installer provides:
 your-project/
 └── {bmad_folder}/
     ├── core/         # Core framework + BMad Master agent
-    ├── bmm/          # BMad Method (12 agents, 34 workflows)
-    ├── bmb/          # BMad Builder (1 agent, 7 workflows)
+    ├── bmm/          # BMad Method (8 software dev agents, 30+ workflows)
+    ├── bmgd/         # BMad Game Development (4 game dev agents, 20+ workflows)
+    ├── bmb/          # BMad Builder (1 agent, 11 workflows)
     ├── cis/          # Creative Intelligence (5 agents, 5 workflows)
     └── _cfg/         # Your customizations (survives updates)
         └── agents/   # Agent customization files
@@ -234,7 +269,7 @@ your-project/
 2. Run `*workflow-init` to set up your project workflow path
 3. Follow the [Quick Start](#-quick-start) guide above to choose your planning track
 
-**Alternative:** [**Web Bundles**](./docs/USING_WEB_BUNDLES.md) - Use BMAD agents in Claude Projects, ChatGPT, or Gemini without installation
+**Alternative:** [**Web Bundles**](./docs/web-bundles-gemini-gpt-guide.md) - Use BMAD agents in Claude Projects, ChatGPT, or Gemini without installation
 
 ---
 
@@ -319,7 +354,7 @@ Smart setup that adapts to your environment:
 
 Everything in one place:
 
-- Single `{bmad_folder}/` folder (no scattered files, default folder name is .bmad)
+- Single `{bmad_folder}/` folder (no scattered files, default folder name is `bmad`)
 - Modules live side-by-side (core, bmm, bmb, cis)
 - Your configs in `_cfg/` (survives updates)
 - Easy to version control or exclude

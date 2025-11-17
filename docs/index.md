@@ -10,7 +10,7 @@ Complete map of all BMad Method v6 documentation with recommended reading paths.
 
 | Your Situation         | Start Here                                                      | Then Read                                                     |
 | ---------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
-| **Brand new to BMad**  | [Quick Start Guide](../src/modules/bmm/docs/quick-start.md)     | [BMM Workflows Guide](../src/modules/bmm/workflows/README.md) |
+| **Brand new to BMad**  | [First-Time Setup](./first-time-setup.md) (15 min walkthrough)  | [BMM Quick Start](../src/modules/bmm/docs/quick-start.md)     |
 | **Upgrading from v4**  | [v4 to v6 Upgrade Guide](./v4-to-v6-upgrade.md)                 | [Quick Start Guide](../src/modules/bmm/docs/quick-start.md)   |
 | **Brownfield project** | [Brownfield Guide](../src/modules/bmm/docs/brownfield-guide.md) | [Quick Start Guide](../src/modules/bmm/docs/quick-start.md)   |
 
@@ -23,13 +23,14 @@ Complete map of all BMad Method v6 documentation with recommended reading paths.
 - **[README.md](../README.md)** - Main project overview, feature summary, and module introductions
 - **[CONTRIBUTING.md](../CONTRIBUTING.md)** - How to contribute, pull request guidelines, code style
 - **[CHANGELOG.md](../CHANGELOG.md)** - Version history and breaking changes
-- **[CLAUDE.md](../CLAUDE.md)** - Claude Code specific guidelines for this project
 
 ### Installation & Setup
 
+- **[First-Time Setup Walkthrough](./first-time-setup.md)** - Complete step-by-step guide (15 minutes)
+- **[Troubleshooting Guide](./troubleshooting.md)** - Common issues and solutions
 - **[v4 to v6 Upgrade Guide](./v4-to-v6-upgrade.md)** - Migration path for v4 users
 - **[Document Sharding Guide](./document-sharding-guide.md)** - Split large documents for 90%+ token savings
-- **[Web Bundles](./USING_WEB_BUNDLES.md)** - Use BMAD agents in Claude Projects, ChatGPT, or Gemini without installation
+- **[Web Bundles](./web-bundles-gemini-gpt-guide.md)** - Use BMAD agents in Claude Projects, ChatGPT, or Gemini without installation
 - **[Bundle Distribution Setup](./BUNDLE_DISTRIBUTION_SETUP.md)** - Maintainer guide for bundle auto-publishing
 
 ---
@@ -72,7 +73,7 @@ Instructions for loading agents and running workflows in your development enviro
 
 - [Claude Code](./ide-info/claude-code.md)
 - [Cursor](./ide-info/cursor.md)
-- [VS Code](./ide-info/windsurf.md)
+- [VS Code](./ide-info/vs-code.md)
 
 **Other Supported IDEs:**
 
