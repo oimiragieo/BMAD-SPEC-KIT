@@ -28,7 +28,7 @@ The BMad Method Module (BMM) provides a comprehensive team of specialized AI age
 
 ### All BMM Agents
 
-**Core Development (8 agents):**
+**Software Development (8 agents):**
 
 - PM (Product Manager)
 - Analyst (Business Analyst)
@@ -39,17 +39,13 @@ The BMad Method Module (BMM) provides a comprehensive team of specialized AI age
 - UX Designer
 - Technical Writer
 
-**Game Development (3 agents):**
-
-- Game Designer
-- Game Developer
-- Game Architect
-
 **Meta (1 core agent):**
 
 - BMad Master (Orchestrator)
 
-**Total:** 12 agents + cross-module party mode support
+**Total:** 8 BMM agents + 1 core agent
+
+**Note:** Game development agents (Game Designer, Game Developer, Game Architect, Game Scrum Master) are available in the optional **BMGD module**. See the [BMGD Module README](../../bmgd/README.md) for details.
 
 ---
 
