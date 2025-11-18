@@ -58,12 +58,14 @@ The installer configures settings in `.vscode/settings.json` including:
 ### Troubleshooting
 
 **Agents don't appear in mode selector:**
+
 1. Ensure installation completed successfully
 2. Check that `.github/chatmodes/` directory exists
 3. Restart VS Code
 4. Verify GitHub Copilot extension is active
 
 **Workflows not loading:**
+
 1. Ensure you've started a fresh chat session
 2. Verify the agent loaded by checking the mode indicator
 3. Try typing the full workflow path: `/bmad:bmm:workflows:workflow-init`

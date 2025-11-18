@@ -8,11 +8,11 @@ Complete map of all BMad Method v6 documentation with recommended reading paths.
 
 **New users:** Start with one of these based on your situation:
 
-| Your Situation         | Start Here                                                      | Then Read                                                     |
-| ---------------------- | --------------------------------------------------------------- | ------------------------------------------------------------- |
-| **Brand new to BMad**  | [First-Time Setup](./first-time-setup.md) (15 min walkthrough)  | [BMM Quick Start](../src/modules/bmm/docs/quick-start.md)     |
-| **Upgrading from v4**  | [v4 to v6 Upgrade Guide](./v4-to-v6-upgrade.md)                 | [Quick Start Guide](../src/modules/bmm/docs/quick-start.md)   |
-| **Brownfield project** | [Brownfield Guide](../src/modules/bmm/docs/brownfield-guide.md) | [Quick Start Guide](../src/modules/bmm/docs/quick-start.md)   |
+| Your Situation         | Start Here                                                      | Then Read                                                   |
+| ---------------------- | --------------------------------------------------------------- | ----------------------------------------------------------- |
+| **Brand new to BMad**  | [First-Time Setup](./first-time-setup.md) (15 min walkthrough)  | [BMM Quick Start](../src/modules/bmm/docs/quick-start.md)   |
+| **Upgrading from v4**  | [v4 to v6 Upgrade Guide](./v4-to-v6-upgrade.md)                 | [Quick Start Guide](../src/modules/bmm/docs/quick-start.md) |
+| **Brownfield project** | [Brownfield Guide](../src/modules/bmm/docs/brownfield-guide.md) | [Quick Start Guide](../src/modules/bmm/docs/quick-start.md) |
 
 ---
 
