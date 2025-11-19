@@ -44,9 +44,11 @@ npx bmad-method@alpha install
 The installer will ask you:
 
 **Question 1: What would you like to do?**
+
 - Choose: `Install BMAD to new project` (or `Update existing installation`)
 
 **Question 2: Select modules to install**
+
 - For software development: Select `BMM`
 - For game development: Also select `BMGD`
 - For custom agents: Also select `BMB`
@@ -55,16 +57,20 @@ The installer will ask you:
 **Recommended for first time**: Select `BMM` only (you can add more later)
 
 **Question 3: Your name**
+
 - Enter your name (agents will use this when addressing you)
 
 **Question 4: Communication language**
+
 - Select your preferred language (English recommended for documentation)
 
 **Question 5: IDE selection**
+
 - Choose your IDE from the list
 - This configures IDE-specific integrations
 
 **Question 6: Folder name**
+
 - Press Enter for default (`bmad`)
 - Or enter custom name (e.g., `.bmad` for hidden folder)
 
@@ -109,27 +115,32 @@ ls .claude/commands/bmad/
 ### 2.2 Open Your IDE
 
 **Claude Code:**
+
 1. Open Claude Code in your project directory
 2. Type `/` to open command palette
 3. Type `/bmad` - you should see BMAD commands autocomplete
 
 **Cursor:**
+
 1. Open Cursor in your project
 2. Open Composer
 3. Type `@bmad` - should see BMAD rules
 
 **VS Code:**
+
 1. Open VS Code
 2. Open Copilot Chat
 3. Click mode selector - should see BMAD modes
 
 **Windsurf:**
+
 1. Open Windsurf
 2. Check Workflows menu - should see BMAD workflows
 
 ### 2.3 Troubleshooting
 
 **If commands don't appear:**
+
 1. Restart your IDE
 2. Check [Troubleshooting Guide](./troubleshooting.md)
 3. Verify installation directory is correct
@@ -143,6 +154,7 @@ ls .claude/commands/bmad/
 **Important**: Always use a **fresh chat** for each workflow.
 
 **How to start fresh chat:**
+
 - **Claude Code**: Click "New Chat" or press Cmd/Ctrl + Shift + N
 - **Cursor**: Start new Composer session
 - **VS Code**: Clear chat or start new
@@ -153,20 +165,24 @@ ls .claude/commands/bmad/
 **Why Analyst?** This agent runs `workflow-init`, which sets up your project workflow.
 
 **Claude Code:**
+
 ```
 /bmad:bmm:agents:analyst
 ```
 
 **Cursor:**
+
 ```
 @bmad/bmm/agents/analyst
 ```
 
 **VS Code (Copilot):**
+
 - Click mode selector
 - Choose "BMM Analyst"
 
 **Windsurf:**
+
 - Start workflow: `bmm-analyst`
 
 ### 3.3 Wait for the Menu
@@ -186,6 +202,7 @@ What would you like to do?
 ```
 
 **If no menu appears:**
+
 - Wait a few seconds
 - Ask: "Show me your menu"
 - See [Troubleshooting: Agent Menu Doesn't Appear](./troubleshooting.md#agent-menu-doesnt-appear)
@@ -199,16 +216,19 @@ What would you like to do?
 Tell the agent to run workflow-init using **any** of these methods:
 
 **Option 1 - Natural language:**
+
 ```
 Run workflow-init
 ```
 
 **Option 2 - Shortcut:**
+
 ```
 *workflow-init
 ```
 
 **Option 3 - Menu number:**
+
 ```
 1
 ```
@@ -218,15 +238,18 @@ Run workflow-init
 The agent will ask about your project:
 
 **Question 1: Describe your project**
+
 - Explain what you're building
 - Include: purpose, key features, who it's for
 - Example: "A task management web app for teams with real-time collaboration"
 
 **Question 2: Existing codebase?**
+
 - **New project**: Say "no" or "greenfield"
 - **Existing code**: Say "yes" and describe current state
 
 **Question 3: Project size/complexity**
+
 - **Small/simple**: Bug fix, small feature
 - **Medium**: New product feature, MVP
 - **Large/complex**: Full product, platform
@@ -236,21 +259,25 @@ The agent will ask about your project:
 The agent will recommend a **planning track**:
 
 **Quick Flow Track:**
+
 - Fast implementation with tech-spec only
 - For: Bug fixes, simple features, clear scope
 - Documents: Tech spec, simple stories
 
 **BMad Method Track:**
+
 - Full planning with PRD, architecture, UX
 - For: Products, platforms, complex features
 - Documents: PRD, architecture, stories
 
 **Enterprise Method Track:**
+
 - Extended planning with security, DevOps, testing
 - For: Enterprise systems, compliance needs
 - Documents: PRD, architecture, security plan, DevOps plan
 
 **What to do:**
+
 - Review the recommendation
 - Confirm or adjust based on your needs
 
@@ -264,6 +291,7 @@ docs/
 ```
 
 You'll see confirmation:
+
 ```
 ✅ Workflow initialization complete!
 Next step: Run *workflow-status to see what's next
@@ -310,12 +338,14 @@ Next REQUIRED workflow:
 ### 5.4 Follow the Guidance
 
 **Understanding the indicators:**
+
 - ○ **Optional** - Can skip, helpful but not required
 - 💡 **Recommended** - Strongly suggested, improves results
 - ⚠️ **Required** - Must complete before moving forward
 - ✅ **Complete** - Already done
 
 **What to do next:**
+
 1. Decide if you want to do optional/recommended workflows
 2. When ready, run the next required workflow
 3. Use fresh chat for each workflow
@@ -327,26 +357,31 @@ Next REQUIRED workflow:
 ### Example: Creating a PRD
 
 **6.1 Start fresh chat and load PM agent:**
+
 ```
 /bmad:bmm:agents:pm
 ```
 
 **6.2 Run the PRD workflow:**
+
 ```
 *prd
 ```
 
 **6.3 Follow the interactive process:**
+
 - Agent will ask questions about requirements
 - Provide detailed answers
 - Agent generates PRD.md in your docs/ folder
 
 **6.4 Review the output:**
+
 ```bash
 cat docs/PRD.md
 ```
 
 **6.5 Continue:**
+
 - Run `*workflow-status` again
 - See what's next (usually architecture or stories)
 - Repeat process
@@ -365,11 +400,13 @@ cat docs/PRD.md
 ### Key Concepts
 
 **Fresh Chat = One Workflow:**
+
 - Each workflow needs dedicated conversation
 - Prevents context pollution
 - Ensures best results
 
 **Phases:**
+
 - **Phase 1**: Analysis (optional brainstorming, research)
 - **Phase 2**: Planning (PRD, tech spec, or GDD)
 - **Phase 3**: Solutioning (architecture, UX)
@@ -379,6 +416,7 @@ cat docs/PRD.md
 Different projects need different planning depth. BMAD adapts to your needs.
 
 **Agent Roles:**
+
 - **PM**: Creates requirements and specs
 - **Analyst**: Initial analysis and workflow setup
 - **Architect**: System design
@@ -412,6 +450,7 @@ Different projects need different planning depth. BMAD adapts to your needs.
 ### Best Practices
 
 **1. Be specific in answers:**
+
 ```
 Bad:  "A web app"
 Good: "A React-based task management SaaS for remote teams,
@@ -419,16 +458,19 @@ Good: "A React-based task management SaaS for remote teams,
 ```
 
 **2. Review before accepting:**
+
 - Read generated PRD, architecture, etc.
 - Make sure it matches your vision
 - Ask agent to revise if needed
 
 **3. Keep context documents:**
+
 - Save PRD, architecture, workflow-status
 - Commit to version control
 - Reference in later workflows
 
 **4. Use workflow-status as your guide:**
+
 - It knows the right order
 - Shows dependencies
 - Prevents missing steps
@@ -463,6 +505,7 @@ Good: "A React-based task management SaaS for remote teams,
 ## Quick Reference Card
 
 **Common Commands:**
+
 ```bash
 # Check what to do next
 *workflow-status
@@ -482,6 +525,7 @@ Good: "A React-based task management SaaS for remote teams,
 ```
 
 **Remember:**
+
 - 🔄 Fresh chat for each workflow
 - 📊 Check workflow-status often
 - 💬 Ask agents questions

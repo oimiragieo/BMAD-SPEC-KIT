@@ -20,6 +20,7 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### Installation Fails or Hangs
 
 **Symptoms:**
+
 - `npx bmad-method@alpha install` fails
 - Installation hangs at a specific step
 - Error messages about missing dependencies
@@ -27,18 +28,22 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 **Solutions:**
 
 1. **Check Node.js version**:
+
    ```bash
    node --version
    ```
+
    Required: Node.js v20+ (see package.json)
 
 2. **Clear npm cache**:
+
    ```bash
    npm cache clean --force
    npx clear-npx-cache
    ```
 
 3. **Use specific version**:
+
    ```bash
    npx bmad-method@6.0.0-alpha.8 install
    ```
@@ -50,18 +55,22 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### {bmad_folder} Created in Wrong Location
 
 **Symptoms:**
+
 - BMAD folder appears in unexpected directory
 - Can't find the installed files
 
 **Solutions:**
 
 1. **Check current directory before installation**:
+
    ```bash
    pwd  # or 'cd' on Windows
    ```
+
    Installation creates `{bmad_folder}/` in the current directory
 
 2. **Move to project root** before installing:
+
    ```bash
    cd /path/to/your/project
    npx bmad-method@alpha install
@@ -74,15 +83,18 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### Modules Missing After Installation
 
 **Symptoms:**
+
 - Only some modules installed (e.g., BMM but not BMGD)
 - Expected agents or workflows don't appear
 
 **Solutions:**
 
 1. **Re-run installer** and select additional modules:
+
    ```bash
    npx bmad-method@alpha install
    ```
+
    Installer will detect existing installation and offer to add modules
 
 2. **Check installation summary**:
@@ -102,6 +114,7 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### Agents Don't Appear in IDE
 
 **Symptoms:**
+
 - Can't find BMAD commands/agents in IDE
 - Slash commands don't autocomplete
 - No BMAD menu appears
@@ -131,6 +144,7 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### Agent Menu Doesn't Appear
 
 **Symptoms:**
+
 - Agent loads but doesn't show workflow menu
 - Just see "agent loaded" but no options
 
@@ -151,12 +165,14 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### Wrong Agent Loads
 
 **Symptoms:**
+
 - Selected one agent but different one appears
 - Agent behavior doesn't match expectations
 
 **Solutions:**
 
 1. **Verify command**:
+
    ```
    /bmad:bmm:agents:dev     ✅ Correct
    /bmad-dev                ❌ May be ambiguous
@@ -175,6 +191,7 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### "workflow-init" Command Not Found
 
 **Symptoms:**
+
 - `*workflow-init` returns "command not found"
 - Workflow doesn't start
 
@@ -185,6 +202,7 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
    - Try: `/bmad:bmm:agents:analyst` then `*workflow-init`
 
 2. **Use full path**:
+
    ```
    /bmad:bmm:workflows:workflow-status:init
    ```
@@ -198,6 +216,7 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### Workflow Returns Errors or Fails
 
 **Symptoms:**
+
 - Workflow starts but encounters errors
 - Agent seems confused or gives wrong output
 
@@ -222,15 +241,17 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### Workflow Creates Files in Wrong Location
 
 **Symptoms:**
+
 - PRD.md appears in unexpected folder
 - Can't find generated documents
 
 **Solutions:**
 
 1. **Check config.yaml**:
+
    ```yaml
    # {bmad_folder}/core/config.yaml
-   output_folder: "docs"  # or your custom location
+   output_folder: 'docs' # or your custom location
    ```
 
 2. **Verify current directory**:
@@ -289,11 +310,13 @@ Common issues and solutions for BMAD Core, BMM, BMGD, BMB, and CIS modules.
 ### Can't Find config.yaml
 
 **Location:**
+
 ```
 {bmad_folder}/core/config.yaml
 ```
 
 **If missing:**
+
 ```bash
 # Re-run installation
 npx bmad-method@alpha install
@@ -302,12 +325,14 @@ npx bmad-method@alpha install
 ### Agent Customizations Not Working
 
 **Symptoms:**
+
 - Modified agent in `_cfg/agents/` but changes don't appear
 - Agent still uses default personality
 
 **Solutions:**
 
 1. **Rebuild agents**:
+
    ```bash
    npx bmad-method@alpha build
    ```
@@ -325,15 +350,17 @@ npx bmad-method@alpha install
 ### Wrong Language in Responses
 
 **Symptoms:**
+
 - Agent responds in unexpected language
 - Mix of languages in output
 
 **Solutions:**
 
 1. **Check config.yaml**:
+
    ```yaml
-   communication_language: "English"
-   output_language: "English"
+   communication_language: 'English'
+   output_language: 'English'
    ```
 
 2. **Module-specific override**:
@@ -367,11 +394,13 @@ npx bmad-method@alpha install
 **Fresh chat** = New conversation with no previous context
 
 **Why it matters:**
+
 - AI models have context limits
 - Previous conversations create "noise"
 - Fresh start = better, more accurate results
 
 **How to start fresh chat:**
+
 - **Claude Code**: Click "New Chat" or Cmd/Ctrl + Shift + N
 - **Cursor**: Start new composer session
 - **Windsurf**: New workflow execution
@@ -382,11 +411,13 @@ npx bmad-method@alpha install
 ### How Do I Know What Workflow to Run Next?
 
 **Use workflow-status**:
+
 ```
 *workflow-status
 ```
 
 This shows:
+
 - Current phase
 - Completed workflows ✅
 - Next required workflow ⚠️
@@ -395,6 +426,7 @@ This shows:
 ### Can I Use Multiple Agents at Once?
 
 **Yes!** Use **Party Mode**:
+
 ```
 /bmad:core:workflows:party-mode
 ```
@@ -402,6 +434,7 @@ This shows:
 This activates **multi-agent collaboration** where all available agents work together on your request.
 
 **Perfect for:**
+
 - Strategic decisions
 - Complex planning
 - Cross-functional tasks
@@ -412,6 +445,7 @@ This activates **multi-agent collaboration** where all available agents work tog
 See the [v4 to v6 Upgrade Guide](./v4-to-v6-upgrade.md) for complete instructions.
 
 **Quick summary:**
+
 1. Backup your v4 installation
 2. Run v6 installer
 3. Installer auto-detects v4 and migrates settings
@@ -436,6 +470,7 @@ See the [v4 to v6 Upgrade Guide](./v4-to-v6-upgrade.md) for complete instruction
   - Documentation improvements
 
 **When filing an issue, include:**
+
 1. BMAD version (`package.json` → `version`)
 2. Node.js version (`node --version`)
 3. IDE and version

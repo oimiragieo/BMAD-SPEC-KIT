@@ -17,6 +17,7 @@ BMAD agents integrate seamlessly with Claude Code through slash commands. After 
 ### What Happens After Activation
 
 When you activate an agent:
+
 1. The agent persona loads with specialized expertise
 2. An **interactive menu appears** showing available workflows
 3. You can select workflows by:
@@ -47,15 +48,18 @@ BMAD uses hierarchical slash commands:
 After loading an agent, common workflows you'll use:
 
 **Initial Setup:**
+
 - `*workflow-init` - Initialize your project workflow (run first!)
 - `*workflow-status` - Check what to do next
 
 **Planning:**
+
 - `*prd` - Create Product Requirements Document
 - `*tech-spec` - Create technical specification
 - `*create-architecture` - Design system architecture
 
 **Implementation:**
+
 - `*dev-story` - Implement a user story
 - `*test-story` - Create tests for a story
 
@@ -64,10 +68,12 @@ After loading an agent, common workflows you'll use:
 **Always use a fresh chat for each workflow** to avoid context limitations and hallucinations.
 
 **How to start a fresh chat in Claude Code:**
+
 1. Click the "New Chat" button, OR
 2. Use keyboard shortcut (Cmd/Ctrl + Shift + N)
 
 **Why this matters:**
+
 - Prevents context overload from previous conversations
 - Ensures agent has full attention on current workflow
 - Avoids confusion from mixed contexts
@@ -125,6 +131,7 @@ If a workflow fails:
 ### Quick Reference
 
 **Module Prefixes:**
+
 - `bmad:bmm` - BMad Method (software development)
 - `bmad:bmgd` - BMad Game Development
 - `bmad:bmb` - BMad Builder (create custom agents)
