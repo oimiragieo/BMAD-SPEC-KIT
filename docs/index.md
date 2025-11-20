@@ -23,6 +23,8 @@ Complete map of all BMad Method v6 documentation with recommended reading paths.
 - **[README.md](../README.md)** - Main project overview, feature summary, and module introductions
 - **[CONTRIBUTING.md](../CONTRIBUTING.md)** - How to contribute, pull request guidelines, code style
 - **[CHANGELOG.md](../CHANGELOG.md)** - Version history and breaking changes
+- **[claude.md](../claude.md)** - Codebase guide for AI agents and developers
+- **[Archive](./archive/)** - Historical reports and technical analysis
 
 ### Installation & Setup
 

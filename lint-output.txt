@@ -1,4 +1,0 @@
-
-> bmad-method@6.0.0-alpha.8 lint
-> eslint . --ext .js,.cjs,.mjs,.yaml --max-warnings=0
-

@@ -175,8 +175,7 @@ bmad-method/
 ├── README.md              # Main project README
 ├── CONTRIBUTING.md        # Contribution guidelines
 ├── CHANGELOG.md           # Version history
-├── CODEBASE_ANALYSIS.md   # Technical analysis (comprehensive)
-├── ENHANCEMENT_PLAN.md    # Enhancement roadmap
+├── claude.md              # Codebase guide for AI agents and developers
 └── v6-open-items.md       # Pre-beta TODO list
 ```
 
@@ -636,12 +635,12 @@ Runs on every PR:
 | File                            | Purpose                               |
 | ------------------------------- | ------------------------------------- |
 | `README.md`                     | Main project README (comprehensive)   |
-| `CODEBASE_ANALYSIS.md`          | Deep technical analysis               |
-| `ENHANCEMENT_PLAN.md`           | Enhancement roadmap and POCs          |
+| `claude.md`                     | Codebase guide for AI agents/developers |
 | `CONTRIBUTING.md`               | Contribution guidelines               |
 | `CHANGELOG.md`                  | Version history                       |
 | `v6-open-items.md`              | Pre-beta TODO list                    |
 | `docs/index.md`                 | Documentation hub                     |
+| `docs/archive/`                 | Historical reports and audits         |
 | `src/modules/bmm/docs/README.md` | BMM documentation hub                 |
 
 ---
@@ -903,8 +902,7 @@ npm ci
 - **[Main README](./README.md)** - Project overview
 - **[BMM Documentation Hub](./src/modules/bmm/docs/README.md)** - Complete BMM guides
 - **[Contributing Guide](./CONTRIBUTING.md)** - Contribution guidelines
-- **[Codebase Analysis](./CODEBASE_ANALYSIS.md)** - Technical deep dive
-- **[Enhancement Plan](./ENHANCEMENT_PLAN.md)** - Roadmap and POCs
+- **[Documentation Archive](./docs/archive/)** - Historical reports and technical analysis
 
 ### Key External Docs
 
